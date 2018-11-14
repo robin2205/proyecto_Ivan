@@ -1,0 +1,8 @@
+# Ocultamos las carpetas del proyecto, así nadie podrá acceder a ellas
+Options All -Indexes
+
+# Autorizamos la utilización de URL's amigables
+RewriteEngine On
+
+# Ponemos la regla de escritura
+RewriteRule ^([-a-zA-Z0-9/]+)$ index.php?ruta=$1

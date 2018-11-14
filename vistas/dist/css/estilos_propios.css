@@ -1,0 +1,132 @@
+/*ESTILO PARA LOS MODALES*/
+.modales .modal-dialog{
+	margin-top: 50px;
+}
+.modales .modal-content .modal-header{
+	background: #3c8dbc;
+	color: #ffffff;
+}
+.modales .modal-content .modal-header button{
+	color: #ffffff;
+}
+.modales #formularioCrear #groupFoto,
+.modales #formularioEditar #groupFoto{
+	margin-top: -5px;
+	margin-bottom: -15px;
+}
+.form-CrearVenta,
+.form-CrearRecibo{
+	padding: 10px;
+}
+.form-CrearVenta .row,
+.form-CrearRecibo .row{
+	margin-bottom: 10px;
+}
+
+
+
+
+
+
+
+
+
+
+/*========================================
+ESCRITORIO GRANDE  - Se mide en 1366px
+========================================*/
+@media (min-width: 1200px){
+	.table #id{
+		width: 10px;
+	}
+	.modales .input-group span{
+		width: 50px;
+	}
+	.modales .input-group input,
+	.modales .input-group select{
+		width: 500px;
+	}
+	.modales .row .input-group input{
+		width: 100%;
+	}
+	#spanAddon{
+		width: 47px;
+	}
+}
+
+/*========================================
+ESCRITORIO MEDIANO - Se mide en 1024px
+========================================*/
+@media (max-width: 1199px) and (min-width: 992px){
+	.table #id{
+		width: 10px;
+	}
+	.modales .input-group span{
+		width: 50px;
+	}
+	.modales .input-group input,
+	.modales .input-group select{
+		width: 500px;
+	}
+	.modales .row .input-group input{
+		width: 100%;
+	}
+	#spanAddon{
+		width: 47px;
+	}
+}
+
+/*========================================
+ESCRITORIO PEQUEÑO - Se mide en 768px
+========================================*/
+@media (max-width: 991px) and (min-width: 768px){
+	.modales .input-group span{
+		width: 80px;
+	}
+	.modales .row .input-group span{
+		width: 50px;
+	}
+	.modales .input-group input,
+	.modales .input-group select{
+		width: 500px;
+	}
+	.modales .row .input-group input{
+		width: 100%;
+	}
+	#spanAddon{
+		width: 47px;
+	}
+}
+
+/*========================================
+ESCRITORIO EXTRAPEQUEÑO - Se mide en 320px
+========================================*/
+@media (max-width: 767px){
+	.modales .input-group span{
+		width: 40px;
+	}
+	.modales .input-group input,
+	.modales .input-group select{
+		width: 100%;
+	}
+	#spanAddon, #spanIcono{
+		width: 47px;
+	}
+	.pc{
+		margin-bottom: 10px;
+	}
+	.btnReporteExcel{
+		margin-top: 10px;
+		margin-right: 5px;
+	}
+}
+
+/*========================================
+MEDIDAD HORIZONTALES - Se mide en 432px
+========================================*/
+@media (max-width: 432px){
+	.logo-lg img{
+		height: 50px;
+		width: 100%;
+	}
+}

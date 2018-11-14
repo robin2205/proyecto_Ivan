@@ -122,14 +122,14 @@ $(".tablaVentas").on('click',"button.btnImprimirFactura",function(){
 	window.open("extensiones/tcpdf/pdf/factura.php?factura="+factura,"_blank");
 });
 
+/* ========================================================================================================================
+RANGO DE FECHAS (DATE RANGE)
+======================================================================================================================== */
 if(window.matchMedia("(max-width:768px)").matches){
 	$("#daterange-btn").removeClass("pull-right");
 	$("#daterange-btn").css({"margin-top":"10px"});
 }
 
-/* ========================================================================================================================
-RANGO DE FECHAS (DATE RANGE)
-======================================================================================================================== */
 $("#daterange-btn").daterangepicker({
 	ranges:{
 		'Hoy':[moment(),moment()],

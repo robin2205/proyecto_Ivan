@@ -27,7 +27,6 @@ class AjaxTablaProductos{
 									"'.$productos[$i]["descripcion"].'",
 									"'.$categoria["categoria"].'",
 									"'.$productos[$i]["stock"].'",
-									"'.$productos[$i]["cant_reservada"].'",
 									"$ '.number_format($productos[$i]["precio_compra"],0).'",
 									"'.$productos[$i]["iva"].'%",
 									"$ '.number_format($productos[$i]["precio_venta"],0).'",

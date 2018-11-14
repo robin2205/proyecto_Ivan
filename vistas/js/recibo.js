@@ -47,92 +47,19 @@ function cargarTablaRecibos(fechaInicial,fechaFinal){
 /* ========================================================================================================
 											CREAR RECIBOS
 ======================================================================================================== */
-// AGREGANDO PRODUCTOS
-var arrayProductosRecibo={}; // Creamos un Objeto
-$("#productoRecibo").keypress(function(e){
-	if(e.which==13){
-		var producto=$(this).val();
-		// Realizamos una petición AJAX para traer todo los productos
-		var datos=new FormData();
-		datos.append("producto",producto);
-		$.ajax({
-			url:"ajax/ventas.ajax.php",
-			type:"POST",
-			data:datos,
-			cache:false,
-			contentType:false,
-			processData:false,
-			dataType:"json",
-			success:function(respuesta){
-				// Validamos que la respuesta no venga vacía
-				if(respuesta!=false){
-					var bandera=false;
-					var arrayDatos=[respuesta["valor_Iva"],respuesta["precio_venta"],1];
-					// Removemos el mensaje de error si el producto existe
-					$(".msgError").remove();
-					// Mostramos el producto en el textarea, pero validamos que no se haya ingresado ya
-					for(var codigo in arrayProductosRecibo){
-						if(codigo==$("#productoRecibo").val()){
-							bandera=true;}}
-					if(!bandera){
-						if($("#observacionesRecibo").val()!=""){
-							var texto=$("#observacionesRecibo").val().concat(" - "+respuesta["descripcion"]+": ");
-							$("#observacionesRecibo").val(texto);}
-						else{
-							$("#observacionesRecibo").val("- "+respuesta["descripcion"]+": ");}}
-					else{
-						// Para que no se repita el mensaje
-						if($(".msgError").length==0){
-							$("#productoRecibo").parent().after(
-								'<div class="alert alert-danger alert-dismissable msgError" style="margin-top:5px">'+
-									'<a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>'+
-								    '<strong>Error!</strong> El producto ya fue ingresado, por favor verifique la información.'+
-								'</div>');}
-						$("#productoRecibo").val("");}
-					$("#productoRecibo").val("");
-					$("#observacionesRecibo").focus();
-					activarTipoPagoRecibo(); // Activamos el método pago
-					llenarArrayProductosRecibo(respuesta["codigo"],arrayDatos);
-					valoresSumatorias();
-					fnProSelRecibo(); // Agrupamos productos en formato JSON
-				}
-				else{
-					// Para que no se repita el mensaje
-					if($(".msgError").length==0){
-						$("#productoRecibo").parent().after(
-							'<div class="alert alert-danger alert-dismissable msgError" style="margin-top:5px">'+
-								'<a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>'+
-							    '<strong>Error!</strong> El producto no existe, por favor verifique la información.'+
-							'</div>');}
-					$("#productoRecibo").val("");}
-			}
-		});}
-});
-
 // LIMPIAR EL TEXTAREA
 $(".btnLimpiar").click(function(){
-	$("#productoRecibo").val("");
 	$("#observacionesRecibo").val("");
-	$("#productoRecibo").focus();
-	$("#subtotalRecibo").val("");
-	$("#subtotalReciboSinP").val("");
-	$("#ivaRecibo").val("");
-	$("#ivaReciboSinP").val("");
-	$("#totalRecibo").val("");
-	$("#totalReciboSinP").val("");
 	$("#metodoPagoRecibo").val("");
 	$("#listaPagoRecibo").val("");
-	activarTipoPagoRecibo(); // Activamos el método pago
-	arrayProductosRecibo={}; // Limpiamos el objeto
-	fnProSelRecibo(); // Agrupamos productos en formato JSON
+	$("#observacionesRecibo").focus();
 });
 
 // SELECCIONAR MÉTODO DE PAGO
 $("#metodoPagoRecibo").change(function(){
-	// Capturamos el método
-	var metodo=$(this).val();
-	// Mostramos las cajas correspondientes al método de pago
-	if(metodo==""){
+	$("#listaMetodosPago").val(""); // Limpiamos el value
+	var metodo=$(this).val(); // Capturamos el método
+	if(metodo==""){ // Mostramos las cajas correspondientes al método de pago
 		$(this).parent().parent().children(".cajasMetodoPago").html('');}
 	else if(metodo=="Efectivo"){
 		$(".cajasMetodoPago").addClass("col-sm-6 col-xs-12");
@@ -208,7 +135,7 @@ $(".form-CrearRecibo").on("change","input#numCheque",function(){
 											EDITAR RECIBOS
 ======================================================================================================== */
 // Agregamos formato a las cajas
-$(".editarAdeuda").number(true,0);
+$(".editarAcumulado").number(true,0);
 $(".editarPago").number(true,0);
 
 // Traemos los datos cuando se de click en el botón editar Recibo
@@ -228,13 +155,14 @@ $(".tablaRecibos").on("click",".btnEditarRecibo",function(){
 			$("#editarNumRecibo").val(respuesta["num_recibo"]);
 			$("#editarCliente").val(respuesta["id_cliente"]);
 			$("#editarObservaciones").val(respuesta["observaciones"]);
-			$("#editarAdeuda").val(respuesta["adeuda"]);
-			$("#editarAdeudaSinP").val(respuesta["adeuda"]);}
+			$("#editarAcumulado").val(respuesta[6]);
+			$("#editarAcumuladoSinP").val(respuesta[6]);}
 	});
 });
 
 // Selección de método de pago
 $(".form-EditarRecibo").on("change","#editarMetodoPago",function(){
+	$(".form-EditarRecibo #listaMetodosPagoEditar").val(""); // Limpiamos el value
 	var seleccion=$(this).val();
 	// Mostramos las cajas correspondientes al método de pago
 	if(seleccion==""){
@@ -284,6 +212,58 @@ $(".form-EditarRecibo").on("keyup","input.editarPago",function(){
 });
 
 /* ========================================================================================================
+										VER DETALLES RECIBOS
+======================================================================================================== */
+// Traemos los datos cuando se de click en el botón editar Recibo
+$(".tablaRecibos").on("click",".btnVerDRecibo",function(){
+	// Limpiamos los textarea
+	$("#detalleFechas").empty();
+	$("#detalleMetodo").empty();
+	$("#detallePagos").empty();
+	var numRecibo=$(this).attr("idRecibo"); // Capturamos el atributo
+	var sumador=0;
+	$(".detalleTotal").number(true,0); // Formato para los números
+	// Creamos la petición AJAX
+	var datos=new FormData();
+	datos.append("numRecibo",numRecibo);
+	$.ajax({
+		url:"ajax/recibo.ajax.php",
+		type:"POST",
+		data:datos,
+		cache:false,
+		contentType:false,
+		processData:false,
+		dataType:"json",
+		success:function(respuesta){
+			$("#detalleNumRecibo").val(respuesta["num_recibo"]);
+			$("#detalleCliente").val(respuesta["id_cliente"]);
+			$("#detalleObservaciones").val(respuesta["observaciones"]);
+			// Traemos los detalles de Pago
+			var datos=new FormData();
+			datos.append("numReciboDetalles",numRecibo);
+			$.ajax({
+				url:"ajax/recibo.ajax.php",
+				type:"POST",
+				data:datos,
+				cache:false,
+				contentType:false,
+				processData:false,
+				dataType:"json",
+				success:function(detalles){
+					for(var i=0;i<detalles.length;i++){
+						if(detalles[i]["pago"]!=0){
+							sumador=sumador+parseInt(detalles[i]["pago"]);
+							var fecha=detalles[i]["fecha"].substring(0,10);
+							var pago=new Number(detalles[i]["pago"]).toLocaleString();
+							$("#detalleFechas").append(fecha+"\n");
+							$("#detalleMetodo").append(detalles[i]["metodo_pago"]+"\n");
+							$("#detallePagos").append("$ "+pago+"\n");}}
+					$("#detalleTotal").val(sumador);}
+			});}
+	});
+});
+
+/* ========================================================================================================
 											ELIMINAR RECIBOS
 ======================================================================================================== */
 // Traemos los datos cuando se de click en el botón editar Recibo
@@ -326,8 +306,22 @@ $(".tablaRecibos").on("click",".btnEliminarRecibo",function(){
 });
 
 /* ========================================================================================================================
+IMPRIMIR FACTURAS
+======================================================================================================================== */
+$(".tablaRecibos").on('click',"button.btnImprimirRecibo",function(){
+	var recibo=$(this).attr("recibo");
+	// Le solicitamos a windows que me abra otra ventana
+	window.open("extensiones/tcpdf/pdf/recibo.php?recibo="+recibo,"_blank");
+});
+
+/* ========================================================================================================================
 RANGO DE FECHAS (DATE RANGE)
 ======================================================================================================================== */
+if(window.matchMedia("(max-width:768px)").matches){
+	$("#daterange-btn2").removeClass("pull-right");
+	$("#daterange-btn2").css({"margin-top":"10px"});
+}
+
 $("#daterange-btn2").daterangepicker({
 	ranges:{
 		'Hoy':[moment(),moment()],
@@ -342,6 +336,8 @@ $("#daterange-btn2").daterangepicker({
 },
 function(start,end){
 	$("#daterange-btn2 span").html(start.format('MMMM DD, YYYY')+' - '+end.format('MMMM DD, YYYY'));
+	// Le cambiamos el html al botón cancelar, para que no genere discordia con el botón Cancelar del módulo Ventas
+	$(".daterangepicker.opensleft .range_inputs .cancelBtn").html("Cancelar Rango");
 	// Capturamos la fecha inicial y final con el formato de la BD
 	var fechaInicial=start.format('YYYY-MM-DD');
 	var fechaFinal=end.format('YYYY-MM-DD');
@@ -358,13 +354,15 @@ function(start,end){
 
 // Acción al cancelar el rango de Fechas
 $(".daterangepicker.opensleft .range_inputs .cancelBtn").on("click",function(){
+	console.log();
 	// Limpiamos la variable capturaRangoR y el localStorage
 	localStorage.removeItem("capturaRangoR");
 	localStorage.removeItem("fechaInicialR");
 	localStorage.removeItem("fechaFinalR");
 	localStorage.clear();
-	// Redireccionamos a la página de ventas
-	window.location="admon-recibos";
+	if($(this).html()=="Cancelar Rango"){
+		// Redireccionamos a la página de ventas
+		window.location="admon-recibos";}
 });
 
 // Capturar hoy
@@ -397,14 +395,6 @@ $(".daterangepicker.opensleft .ranges li").on("click",function(){
 
 
 /* ============================================= FUNCIONES ============================================= */
-// Activación Tipo de Pago
-function activarTipoPagoRecibo(){
-	if($("#observacionesRecibo").val()!=""){
-		$("#metodoPagoRecibo").removeAttr("disabled");}
-	else{
-		$("#metodoPagoRecibo").attr("disabled",true);}
-}
-
 // Función para llenar un array objeto con los productos separados
 function llenarArrayProductosRecibo(propiedad,valor){
 	arrayProductosRecibo[propiedad]=valor;
@@ -430,26 +420,6 @@ function valoresSumatorias(){
 	}
 }
 
-// Agrupar o Listar los productos seleccionado para la venta
-function fnProSelRecibo(){
-	// Convertimos el objeto arrayProductosRecibo en un array
-	var arrayObjeto=Object.keys(arrayProductosRecibo).map(function(key){
-		return [Number(key),arrayProductosRecibo[key]];
-	});
-	// Creamos un array para capturar los datos
-	var listaProducto=[];
-	// Capturamos los datos
-	for(var i=0;i<arrayObjeto.length;i++){
-		var codigo=arrayObjeto[i][0]; // Capturamos el código de los productos
-		var cantidad=arrayObjeto[i][1][2]; // Capturamos la cantidad de los productos
-		listaProducto.push({
-			"codigo":codigo,
-			"cantidad":cantidad
-		});
-	}
-	$("#proSelRecibo").val(JSON.stringify(listaProducto));
-}
-
 // Función para evitar enter sobre input
 function noEnter(e){
 	if(e.keyCode==13){
@@ -459,7 +429,6 @@ function noEnter(e){
 
 // Listar el método de pago al Crear el recibo
 function listarMetodosPagoRecibo(){
-	$("#listaMetodosPago").val("");
 	if($("#metodoPagoRecibo").val()=="Efectivo"){
 		$("#listaMetodosPago").val("Efectivo");}
 	else if($("#metodoPagoRecibo").val()=="T"){

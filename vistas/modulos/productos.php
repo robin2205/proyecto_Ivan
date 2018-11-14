@@ -32,7 +32,6 @@ if($_SESSION["perfil"]=="Vendedor"){
                             <th>Descripción</th>
                             <th>Categoría</th>
                             <th>Stock</th>
-                            <th>Reservadas</th>
                             <th>Precio de Compra</th>
                             <th>IVA</th>
                             <th>Precio de Venta</th>

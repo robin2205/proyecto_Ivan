@@ -58,15 +58,6 @@
                         </div>
                         <!-- Datos Extras del Cliente -->
                         <div class="row datosExtras"></div>
-                        <!-- Selección del Producto -->
-                        <div class="row">
-                            <div class="col-sm-6 col-xs-12">
-                                <div class="input-group" style="width:100%">
-                                    <span class="input-group-addon" id="spanAddon"><i class="fa fa-cart-plus"></i></span>
-                                    <input type="text" class="form-control" name="productoRecibo" id="productoRecibo" maxlength="15" onkeypress="return validar_numero(event)" style="height:38px">
-                                </div>
-                            </div>
-                        </div>
                         <!-- Observación -->
                         <div class="row">
                             <div class="col-xs-12">
@@ -76,38 +67,11 @@
                                 <input type="button" class="btn btn-warning btn-xs pull-right btnLimpiar" value="Limpiar" style="margin-top:5px">
                             </div>
                         </div>
-                        <!-- Subtotal, IVA y Total -->
-                        <div class="row">
-                            <!-- Subtotal -->
-                            <div class="col-sm-3 col-xs-12 pc">
-                                <div class="input-group" style="width:100%">
-                                    <span class="input-group-addon hidden-xs" id="spanAddon"><i class="ion ion-social-usd"></i></span>
-                                    <input type="text" class="form-control subtotalRecibo" id="subtotalRecibo" placeholder="Subtotal Venta" readonly style="height:38px">
-                                    <input type="hidden" name="subtotalRecibo" id="subtotalReciboSinP">
-                                </div>
-                            </div>
-                            <!-- IVA -->
-                            <div class="col-sm-3 col-xs-12 pc">
-                                <div class="input-group" style="width:100%">
-                                    <span class="input-group-addon hidden-xs" id="spanAddon"><i class="ion ion-social-usd"></i></span>
-                                    <input type="text" class="form-control ivaRecibo" id="ivaRecibo" placeholder="IVA" readonly style="height:38px">
-                                    <input type="hidden" name="ivaRecibo" id="ivaReciboSinP">
-                                </div>
-                            </div>
-                            <!-- Total de Venta -->
-                            <div class="col-sm-6 col-xs-12">
-                                <div class="input-group" style="width:100%">
-                                    <span class="input-group-addon hidden-xs" id="spanAddon"><i class="ion ion-social-usd"></i></span>
-                                    <input type="text" class="form-control totalRecibo" id="totalRecibo" placeholder="Total Venta" total="" readonly style="height:38px">
-                                    <input type="hidden" name="totalRecibo" id="totalReciboSinP">
-                                </div>
-                            </div>
-                        </div>
                         <!-- Método de Pago -->
                         <div class="row">
                             <!-- Forma de Pago -->
                             <div class="col-sm-6 col-xs-12">
-                                <select class="form-control" id="metodoPagoRecibo" style="height:38px;" disabled>
+                                <select class="form-control" id="metodoPagoRecibo" style="height:38px;">
                                     <option value="">Seleccionar...</option>
                                     <option value="Efectivo">Efectivo</option>
                                     <option value="T">Tarjeta</option>

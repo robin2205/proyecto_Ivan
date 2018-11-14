@@ -152,11 +152,35 @@ if($_SESSION["perfil"]=="Especial"){
                 </div>
                 <div class="modal-body">
                     <div class="box-body">
+                        <!-- Tipo Cliente -->
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-code"></i></span>
+                                <select class="form-control" name="tipoCliente" required>
+                                    <option value="">Seleccione...</option>
+                                    <option value="C">Cliente</option>
+                                    <option value="E">Empleado</option>
+                                    <option value="P">Proveedor</option>
+                                </select>
+                            </div>
+                        </div>
                         <!-- Nombre -->
                         <div class="form-group">
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-address-card"></i></span>
                                 <input type="text" class="form-control" name="nombreCliente" placeholder="Ingrese el Nombre del Cliente" maxlength="200" onkeypress="return validar_texto(event)" required>
+                            </div>
+                        </div>
+                        <!-- Tipo Documento -->
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-id-badge"></i></span>
+                                <select class="form-control" name="tipoDocumento" id="tipoDocumento" required>
+                                    <option value="">Seleccione...</option>
+                                    <option value="C">Cédula</option>
+                                    <option value="CE">C.Extranjería</option>
+                                    <option value="N">NIT</option>
+                                </select>
                             </div>
                         </div>
                         <!-- Documento -->
@@ -188,10 +212,10 @@ if($_SESSION["perfil"]=="Especial"){
                             </div>
                         </div>
                         <!-- Fecha de Nacimiento -->
-                        <div class="form-group">
+                        <div class="form-group" id="cumpleanos" style="display:none;">
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                <input type="date" class="form-control" name="fechaNacimientoCliente" id="fechaNacimientoCliente" required>
+                                <input type="date" class="form-control" name="fechaNacimientoCliente" id="fechaNacimientoCliente">
                             </div>
                         </div>
                     </div>

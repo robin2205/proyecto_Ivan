@@ -17,7 +17,6 @@ class ModeloClientes{
 			$stmt->execute();
 			# Retornamos un fetchAll por ser más de una línea la que necesitamos devolver
 			return $stmt->fetchAll();}
-		$stmt->close();
 		$stmt=null;
 	}
 
@@ -37,7 +36,6 @@ class ModeloClientes{
 			return "ok";}
 		else{
 			return "error";}
-		$stmt->close();
 		$stmt=null;
 	}
 
@@ -54,7 +52,6 @@ class ModeloClientes{
 			return "ok";}
 		else{
 			return "error";}
-		$stmt->close();
 		$stmt=null;
 	}
 
@@ -67,7 +64,6 @@ class ModeloClientes{
 			return "ok";}
 		else{
 			return "error";}
-		$stmt->close();
 		$stmt=null;
 	}
 }

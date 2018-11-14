@@ -93,8 +93,7 @@ class ControladorVentas{
 											window.location="inicio";}
 									});}
 							});
-						</script>';
-				}
+						</script>';}
 				else{
 					# Mostramos una alerta suave
 					echo '<script>

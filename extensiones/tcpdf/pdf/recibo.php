@@ -1,38 +1,32 @@
 <?php
 # Reqerimos los controladores y modelos
-require_once '../../../controladores/ventas.controlador.php';
-require_once '../../../modelos/ventas.modelo.php';
+require_once '../../../controladores/recibo.controlador.php';
+require_once '../../../modelos/recibo.modelo.php';
 require_once '../../../controladores/clientes.controlador.php';
 require_once '../../../modelos/clientes.modelo.php';
 require_once '../../../controladores/usuarios.controlador.php';
 require_once '../../../modelos/usuarios.modelo.php';
-require_once '../../../controladores/productos.controlador.php';
-require_once '../../../modelos/productos.modelo.php';
 
-# Recibimos la variable GET
-class imprimirFactura{
-public $factura;
-public function traerImpresionFactura(){
-# Traemos la información de la venta
-$item="factura";
-$valor=$this->factura;
-$infoVenta=ControladorVentas::ctrMostrarVentas($item,$valor);
+class imprimirRecibo{
+public $recibo;
+public function traerImpresionRecibo(){
+# Traemos la información del Recibo
+$valor=$this->recibo;
+$infoRecibo=ControladorRecibo::ctrTraerRecibos("num_recibo",$valor,null,null,"num_recibo");
+# Traemos los detalles de Pagos
+$detalles=ControladorRecibo::ctrTrarDetalleRecibos("num_recibo",$valor);
 # Almacenamos la información de la venta en variables
-$fecha=substr($infoVenta["fecha"],0,-8);
-$productos=json_decode($infoVenta["productos"],true);
-$subtotalventa=number_format($infoVenta["subtotalventa"],0);
-$sumaiva=number_format($infoVenta["sumaiva"],0);
-$total=number_format($infoVenta["total"],0);
-$sumaCantidad=0;
+$fecha=substr($infoRecibo["fecha"],0,-8);
+$acumulador=0;
 
 # Traemos la información del Cliente
 $itemCliente="id";
-$valorCliente=$infoVenta["id_cliente"];
+$valorCliente=$infoRecibo["id_cliente"];
 $infoCliente=ControladorClientes::ctrMostrarCliente($itemCliente,$valorCliente);
 
 # Traemos la información del Vendedor
 $itemVendedor="id";
-$valorVendedor=$infoVenta["id_vendedor"];
+$valorVendedor=$infoRecibo["id_usuario"];
 $infoVendedor=ControladorUsuarios::ctrMostrarUsuarios($itemVendedor,$valorVendedor);
 
 # Requerimos el tcpdf para trabajar la impresión
@@ -70,7 +64,7 @@ $bloque1=<<<EOF
 				</div>
 			</td>
 			<td style="background-color:white; width:110px; text-align:center; color:red">
-				<br><br><b>FACTURA N°<br>$valor</b>
+				<br><br><b>RECIBO N°<br>$valor</b>
 			</td>
 		</tr>
 	</table>
@@ -126,82 +120,83 @@ EOF;
 # Pintamos el bloque 2 creado en el PDF
 $pdf->writeHTML($bloque2,false,false,false,false,'');
 
-# ****************************** BLOQUE 3 MAQUETACIÓN CABECERA DE PRODUCTOS ******************************
+# ****************************** BLOQUE 3 MAQUETACIÓN CABECERA DE OBSERVACIONES ******************************
 $bloque3=<<<EOF
 	<table>
 		<tr><td></td></tr>
 	</table>
 	<table style="font-size:10px;padding:5px 10px;">
 		<tr style="background-color:#D9D9D9">
-			<td style="width:260px;text-align:left"><b>Producto</b></td>
-			<td style="width:80px;text-align:center"><b>Cantidad</b></td>
-			<td style="width:100px;text-align:left"><b>Valor Unit.</b></td>
-			<td style="width:100px;text-align:left"><b>Valor Total</b></td>
+			<td style="width:540px;text-align:center"><b>Observaciones</b></td>
+		</tr>
+	</table>
+	<table style="font-size:10px;padding:5px 10px;">
+		<tr>
+			<td style="width:540px;text-align:left;">$infoRecibo[observaciones]</td>
 		</tr>
 	</table>
 EOF;
 # Pintamos el bloque 3 creado en el PDF
 $pdf->writeHTML($bloque3,false,false,false,false,'');
 
-# ****************************** BLOQUE 4 MAQUETACIÓN LISTADO DE PRODUCTOS ******************************
-# Con un foreach hacemos la impresión de los productos que fueron vendidos
-foreach($productos as $key=>$itemP){
-# Hallamos el conteo de Productos comprados
-$sumaCantidad=$sumaCantidad+$itemP["cantidad"];
-$precio=number_format($itemP["precio"],0);
-$totalProducto=number_format($itemP["total"],0);
+# ****************************** BLOQUE 4 MAQUETACIÓN OBSERVACIONES DE LA BD ******************************
 $bloque4=<<<EOF
+	<table>
+		<tr><td></td></tr>
+	</table>
+	<table style="font-size:10px;padding:5px 10px;border-bottom:1px solid #fff">
+		<tr style="background-color:#D9D9D9">
+			<td style="width:540px;text-align:center"><b>Detalles de Pagos</b></td>
+		</tr>
+	</table>
 	<table style="font-size:10px;padding:5px 10px;">
-		<tr>
-			<td style="width:260px;text-align:left;">$itemP[descripcion]</td>
-			<td style="width:80px;text-align:center">$itemP[cantidad]</td>
-			<td style="width:100px;text-align:left">$ $precio</td>
-			<td style="width:100px;text-align:left">$ $totalProducto</td>
+		<tr style="background-color:#D9D9D9">
+			<td style="width:270px;text-align:center;"><b>Fecha de Pago</b></td>
+			<td style="width:270px;text-align:left;"><b>Pago</b></td>
 		</tr>
 	</table>
 EOF;
 # Pintamos el bloque 4 creado en el PDF
 $pdf->writeHTML($bloque4,false,false,false,false,'');
-}
 
-# ****************************** BLOQUE 5 MAQUETACIÓN RESUMEN DE PAGOS ******************************
+# ****************************** BLOQUE 5 MAQUETACIÓN DETALLES ******************************
+foreach($detalles as $key=>$value){
+if($value["pago"]!=0){
+$acumulador+=$value["pago"];
+$pago="$ ".number_format($value["pago"],0);
+$fechaDetalle=substr($value["fecha"],0,-8);
 $bloque5=<<<EOF
-	<table>
-		<tr><td></td></tr>
-	</table>
 	<table style="font-size:10px;padding:5px 10px;">
 		<tr>
-			<td style="width:240px"></td>
-			<td style="width:150px;text-align:right;background-color:#D9D9D9"><b>Items Comprados:</b></td>
-			<td style="width:150px;text-align:left;background-color:#D9D9D9"><b>$sumaCantidad</b></td>
-		</tr>
-		<tr>
-			<td style="width:240px"></td>
-			<td style="width:150px;text-align:right;background-color:#D9D9D9"><b>SubTotal:</b></td>
-			<td style="width:150px;text-align:left;background-color:#D9D9D9"><b>$ $subtotalventa</b></td>
-		</tr>
-		<tr>
-			<td style="width:240px"></td>
-			<td style="width:150px;text-align:right;background-color:#D9D9D9"><b>IVA:</b></td>
-			<td style="width:150px;text-align:left;background-color:#D9D9D9"><b>$ $sumaiva</b></td>
-		</tr>
-		<tr>
-			<td style="width:240px"></td>
-			<td style="width:150px;text-align:right;background-color:#D9D9D9"><b>Total a Pagar:</b></td>
-			<td style="width:150px;text-align:left;background-color:#D9D9D9"><b>$ $total</b></td>
+			<td style="width:270px;text-align:center">$fechaDetalle</td>
+			<td style="width:270px;text-align:left;">$pago</td>
 		</tr>
 	</table>
 EOF;
-# Pintamos el bloque 5 creado en el PDF
+# Pintamos el bloque 4 creado en el PDF
 $pdf->writeHTML($bloque5,false,false,false,false,'');
+}}
+
+# ****************************** BLOQUE 6 MAQUETACIÓN TOTALIZADO ******************************
+$acumulador=number_format($acumulador,0);
+$bloque6=<<<EOF
+	<table style="font-size:10px;padding:5px 10px;">
+		<tr style="background-color:#D9D9D9">
+			<td style="width:270px;text-align:center;"><b>Total Acumulado</b></td>
+			<td style="width:270px;text-align:left;"><b>$ $acumulador</b></td>
+		</tr>
+	</table>
+EOF;
+# Pintamos el bloque 4 creado en el PDF
+$pdf->writeHTML($bloque6,false,false,false,false,'');
 
 /* SALIDA DEL ARCHIVO VISTA PREVIA EN NAVEGADOR*/
-$pdf->Output('factura'.$valor.'.pdf');
+$pdf->Output('recibo'.$valor.'.pdf');
 }
 }
 
 // OBJETOS INSTANCIADOS
-$a=new imprimirFactura();
-$a->factura=$_GET["factura"];
-$a->traerImpresionFactura();
+$a=new imprimirRecibo();
+$a->recibo=$_GET["recibo"];
+$a->traerImpresionRecibo();
 ?>

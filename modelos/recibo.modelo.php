@@ -67,33 +67,24 @@ class ModeloRecibo{
 		if($item!=null){
 			$sql="SELECT * FROM $tabla WHERE $item=:$item";
 			$stmt=Conexion::conectar()->prepare($sql);
-			$stmt->bindParam(":".$item,$valor,PDO::PARAM_INT);
-			$stmt->execute();
-			# Retornamos un fetch por ser una sola línea la que necesitamos devolver
-			return $stmt->fetch();}
+			$stmt->bindParam(":".$item,$valor,PDO::PARAM_INT);}
 		else{
 			$sql="SELECT * FROM $tabla";
-			$stmt=Conexion::conectar()->prepare($sql);
-			$stmt->execute();
-			# Retornamos un fetchAll por ser más de una línea la que necesitamos devolver
-			return $stmt->fetchAll();
-		}
+			$stmt=Conexion::conectar()->prepare($sql);}
+		$stmt->execute();
+		# Retornamos un fetchAll por ser más de una línea la que necesitamos devolver
+		return $stmt->fetchAll();
 		$stmt=null;
 	}
 
 	// Método para Crear un nuevo Recibo
 	static public function mdlCrearRecibo($tabla,$datos){
-		$sql="INSERT INTO $tabla(num_recibo,id_usuario,id_cliente,observaciones,array_datos,subtotal,suma_iva,total,adeuda) VALUES (:num_recibo,:id_usuario,:id_cliente,:observaciones,:array_datos,:subtotal,:suma_iva,:total,:adeuda)";
+		$sql="INSERT INTO $tabla(num_recibo,id_usuario,id_cliente,observaciones) VALUES (:num_recibo,:id_usuario,:id_cliente,:observaciones)";
 		$stmt=Conexion::conectar()->prepare($sql);
 		$stmt->bindParam(":num_recibo",$datos["num_recibo"],PDO::PARAM_INT);
 		$stmt->bindParam(":id_usuario",$datos["id_usuario"],PDO::PARAM_INT);
 		$stmt->bindParam(":id_cliente",$datos["id_cliente"],PDO::PARAM_INT);
 		$stmt->bindParam(":observaciones",$datos["observaciones"],PDO::PARAM_STR);
-		$stmt->bindParam(":array_datos",$datos["array_datos"],PDO::PARAM_STR);
-		$stmt->bindParam(":subtotal",$datos["subtotal"],PDO::PARAM_STR);
-		$stmt->bindParam(":suma_iva",$datos["suma_iva"],PDO::PARAM_STR);
-		$stmt->bindParam(":total",$datos["total"],PDO::PARAM_STR);
-		$stmt->bindParam(":adeuda",$datos["adeuda"],PDO::PARAM_STR);
 		if($stmt->execute()){
 			return "ok";}
 		else{
@@ -125,6 +116,28 @@ class ModeloRecibo{
 		else{
 			return "error";}
 		$stmt->close();
+		$stmt=null;
+	}
+
+	// Este método nos ayuda a traer la suma de pagos realizados por Recibo
+	static public function mdlPagoAcumulado($tabla,$numRecibo){
+		$sql="SELECT SUM(pago) FROM $tabla WHERE num_recibo=:num_recibo";
+		$stmt=Conexion::conectar()->prepare($sql);
+		$stmt->bindParam(":num_recibo",$numRecibo,PDO::PARAM_INT);
+		$stmt->execute();
+		# Retornamos un fetch por ser una sola línea la que necesitamos devolver
+		return $stmt->fetch();
+		$stmt=null;
+	}
+
+	// Método para Mostrar el último Recibo ingresado
+	static public function mdlMostrarUltimoRecibo($tabla,$idCliente,$idUsuario){
+		$sql="SELECT * FROM $tabla WHERE id_cliente=:idCliente AND id_usuario=:idUsuario ORDER BY fecha DESC";
+		$stmt=Conexion::conectar()->prepare($sql);
+		$stmt->bindParam(":idCliente",$idCliente,PDO::PARAM_INT);
+		$stmt->bindParam(":idUsuario",$idUsuario,PDO::PARAM_INT);
+		$stmt->execute();
+		return $stmt->fetchAll();
 		$stmt=null;
 	}
 }

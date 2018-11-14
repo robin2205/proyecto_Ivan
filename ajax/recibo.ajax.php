@@ -18,8 +18,11 @@ class AjaxRecibo{
 		# Capturamos el id del Cliente para traer el nombre
 		$valor=$respuesta["id_cliente"];
 		$infoCliente=ControladorClientes::ctrMostrarCliente("id",$valor);
+		# Con el num_recibo traemos el acumulado de los pagos
+		$acumulado=ControladorRecibo::ctrPagoAcumulado($this->numRecibo);
 		$respuesta["id_cliente"]=$infoCliente["nombre"];
 		$respuesta[3]=$infoCliente["nombre"];
+		array_push($respuesta,$acumulado[0]); // Adicionamos en el array, el valor acumulado
 		echo json_encode($respuesta);
 	}
 
@@ -28,6 +31,13 @@ class AjaxRecibo{
 	public function ajaxEliminarRecibo(){
 		$respuesta=ControladorRecibo::ctrEliminarRecibo($this->eliminarNumRecibo);
 		echo $respuesta;
+	}
+
+	// Traer Detalles Recibo
+	public $numReciboDetalles;
+	public function ajaxDetallesRecibo(){
+		$respuesta=ControladorRecibo::ctrTrarDetalleRecibos("num_recibo",$this->numReciboDetalles);
+		echo json_encode($respuesta);
 	}
 }
 
@@ -42,4 +52,10 @@ if(isset($_POST["reciboEliminar"])){
 	$eliminar=new AjaxRecibo();
 	$eliminar->eliminarNumRecibo=$_POST["reciboEliminar"];
 	$eliminar->ajaxEliminarRecibo();
+}
+
+if(isset($_POST["numReciboDetalles"])){
+	$editar=new AjaxRecibo();
+	$editar->numReciboDetalles=$_POST["numReciboDetalles"];
+	$editar->ajaxDetallesRecibo();
 }

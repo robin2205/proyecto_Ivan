@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 04-09-2018 a las 17:08:34
+-- Tiempo de generación: 10-09-2018 a las 16:50:46
 -- Versión del servidor: 10.1.28-MariaDB
 -- Versión de PHP: 7.1.11
 
@@ -68,10 +68,11 @@ CREATE TABLE `clientes` (
 --
 
 INSERT INTO `clientes` (`id`, `tipo_Cliente`, `nombre`, `tipo_Documento`, `documento`, `email`, `contacto`, `direccion`, `fecha_nacimiento`, `total_compras`, `ultima_compra`, `fecha`) VALUES
-(1, 'C', 'Pepito Perez', 'CE', '123456789', 'pepito@hotmail.com', '(111) 111-1111', 'Carrera 36a 75D134', '1990-12-11', 0, '0000-00-00 00:00:00', '2018-09-02 15:19:40'),
-(3, 'C', 'Claudia Roldán', 'C', '21323842', 'croldan@gmail.com', '(300) 000-0000', 'Carrera 36a 75D134', '1980-02-03', 0, '0000-00-00 00:00:00', '2018-09-03 18:25:14'),
-(4, 'C', 'Yesica Gallego Tobón', 'CE', 'ce15289745', 'yegato00@yahoo.es', '(454) 546-5456', 'Carrera 36a 75D134', '1998-02-02', 0, '0000-00-00 00:00:00', '2018-08-31 17:19:28'),
-(5, 'P', 'Industrias Cargo', 'N', '908147541', 'inducargo@info.com', '(564) 565-4897', 'Carrera 36a 75D134', '0000-00-00', 0, '0000-00-00 00:00:00', '2018-08-31 19:43:00');
+(1, 'C', 'Pepito Perez', 'CE', '123456789', 'pepito@hotmail.com', '(111) 111-1111', 'Carrera 36a 75D134', '1990-12-11', 1, '2018-09-06 09:39:18', '2018-09-06 14:39:18'),
+(3, 'C', 'Claudia Roldán', 'C', '21323842', 'claudiaroldan@gmail.com', '(300) 000-0000', 'Carrera 36a 75D134', '1980-02-03', 3, '2018-09-07 02:54:36', '2018-09-07 19:54:36'),
+(4, 'C', 'Yesica Gallego Tobón', 'CE', 'ce15289745', 'yegato00@yahoo.es', '(454) 546-5456', 'Carrera 36a 75D134', '1998-02-02', 1, '2018-09-06 09:29:41', '2018-09-06 14:29:41'),
+(5, 'P', 'Industrias Cargo', 'N', '908147541', 'inducargo@info.com', '(564) 565-4897', 'Carrera 36a 75D134', '0000-00-00', 0, '0000-00-00 00:00:00', '2018-08-31 19:43:00'),
+(6, 'C', 'Luz Marina Alzate Gómez', 'C', '789456123', 'marinaa@hotmail.com', '(300) 000-0046', 'Carrera 36a 75D134', '1953-04-20', 0, '0000-00-00 00:00:00', '2018-09-09 18:08:51');
 
 -- --------------------------------------------------------
 
@@ -86,6 +87,13 @@ CREATE TABLE `detalles_recibo` (
   `metodo_pago` text COLLATE utf8_spanish_ci NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `detalles_recibo`
+--
+
+INSERT INTO `detalles_recibo` (`id`, `num_recibo`, `pago`, `metodo_pago`, `fecha`) VALUES
+(1, 1, 50000, 'T-4568974', '2018-09-07 19:54:35');
 
 -- --------------------------------------------------------
 
@@ -104,7 +112,6 @@ CREATE TABLE `productos` (
   `valor_Iva` float NOT NULL,
   `precio_venta` float NOT NULL,
   `ventas` int(11) NOT NULL,
-  `cant_reservada` int(11) NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
@@ -112,10 +119,10 @@ CREATE TABLE `productos` (
 -- Volcado de datos para la tabla `productos`
 --
 
-INSERT INTO `productos` (`id`, `id_categoria`, `codigo`, `descripcion`, `stock`, `precio_compra`, `iva`, `valor_Iva`, `precio_venta`, `ventas`, `cant_reservada`, `fecha`) VALUES
-(1, 1, '118', 'Taladro Rojo', 50, 34500, 11, 3795, 40000, 0, 0, '2018-09-03 18:24:29'),
-(3, 2, '3080', 'Compresor De Aire', 85, 123000, 15, 18450, 155000, 0, 0, '2018-09-03 18:24:32'),
-(4, 1, '208', 'Aspiradora Industrial', 45, 153000, 19, 29070, 190000, 0, 0, '2018-09-03 18:24:36');
+INSERT INTO `productos` (`id`, `id_categoria`, `codigo`, `descripcion`, `stock`, `precio_compra`, `iva`, `valor_Iva`, `precio_venta`, `ventas`, `fecha`) VALUES
+(1, 1, '118', 'Taladro Rojo', 49, 34500, 11, 3795, 40000, 1, '2018-09-05 18:40:20'),
+(3, 2, '3080', 'Compresor De Aire', 85, 123000, 15, 18450, 155000, 0, '2018-09-03 18:24:32'),
+(4, 1, '208', 'Aspiradora Industrial', 45, 153000, 19, 29070, 190000, 0, '2018-09-03 18:24:36');
 
 -- --------------------------------------------------------
 
@@ -129,13 +136,15 @@ CREATE TABLE `recibos` (
   `id_usuario` int(11) NOT NULL,
   `id_cliente` int(11) NOT NULL,
   `observaciones` text COLLATE utf8_spanish_ci NOT NULL,
-  `array_datos` text COLLATE utf8_spanish_ci NOT NULL,
-  `subtotal` float NOT NULL,
-  `suma_iva` float NOT NULL,
-  `total` float NOT NULL,
-  `adeuda` float NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `recibos`
+--
+
+INSERT INTO `recibos` (`id`, `num_recibo`, `id_usuario`, `id_cliente`, `observaciones`, `fecha`) VALUES
+(1, 1, 1, 3, 'Disco Duro Para Portátil Hp De 1 Tb', '2018-09-07 19:54:35');
 
 -- --------------------------------------------------------
 
@@ -160,7 +169,7 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `nombre`, `usuario`, `password`, `perfil`, `estado`, `iniciada`, `ultimo_login`, `fecha`) VALUES
-(1, 'Administrador', 'admin', '$2a$07$asxx54ahjppf45sd87aa5OnE8ZHik1IMuyu7UDZ0iqRRCxxPudXKG', 'Administrador', 1, 1, '2018-09-03 13:58:33', '2018-09-03 18:58:33'),
+(1, 'Administrador', 'admin', '$2a$07$asxx54ahjppf45sd87aa5OnE8ZHik1IMuyu7UDZ0iqRRCxxPudXKG', 'Administrador', 1, 1, '2018-09-10 09:45:31', '2018-09-10 14:45:31'),
 (2, 'Demo', 'demo', '$2a$07$asxx54ahjppf45sd87aa5O3NFiRx/xnpLTmIPO.yU9dHDwSC.FqwO', 'Administrador', 1, 0, '2018-08-20 11:36:53', '2018-08-20 16:36:53'),
 (3, 'especial uno', 'espeuno', '$2a$07$asxx54ahjppf45sd87aa5O06oHOq8hPjJ5Be3/zEb/VGTTnblamcy', 'Especial', 1, 0, '2018-08-23 08:52:29', '2018-08-23 13:52:29'),
 (4, 'Vendedor Uno', 'vendeuno', '$2a$07$asxx54ahjppf45sd87aa5OoCl9hieBQ/.P6vRwRFQn/XE/Evradqa', 'Vendedor', 1, 0, '2018-08-23 08:52:03', '2018-08-23 13:52:03');
@@ -184,6 +193,13 @@ CREATE TABLE `ventas` (
   `estado` varchar(2) COLLATE utf8_spanish_ci NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `ventas`
+--
+
+INSERT INTO `ventas` (`id`, `factura`, `id_cliente`, `id_vendedor`, `productos`, `subtotalventa`, `sumaiva`, `total`, `metodo_pago`, `estado`, `fecha`) VALUES
+(1, '1', 3, 1, '[{\"codigo\":\"118\",\"descripcion\":\"Taladro Rojo\",\"cantidad\":\"1\",\"stock\":49,\"precio\":\"40000\",\"total\":\"40000\"}]', 40000, 3795, 40000, 'T-5456465', 'AC', '2018-09-07 18:45:05');
 
 --
 -- Índices para tablas volcadas
@@ -245,13 +261,13 @@ ALTER TABLE `categorias`
 -- AUTO_INCREMENT de la tabla `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `detalles_recibo`
 --
 ALTER TABLE `detalles_recibo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
@@ -263,7 +279,7 @@ ALTER TABLE `productos`
 -- AUTO_INCREMENT de la tabla `recibos`
 --
 ALTER TABLE `recibos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
@@ -275,7 +291,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `ventas`
 --
 ALTER TABLE `ventas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -25,14 +25,13 @@ class AjaxTablaVentas{
 						$respuVendedor=ControladorUsuarios::ctrMostrarUsuarios($item,$valorU);
 						# Válidamos el perfil del usuario que ingresó
 						if($_GET["perfil"]=="Administrador"){
-							$botones="<div class='btn-group'><button class='btn btn-info btn-sm btnImprimirFactura' factura='".$ventas[$i]["factura"]."' title='Imprimir'><i class='fa fa-print'></i></button><button class='btn btn-warning btn-sm btnEditarVenta' title='Editar Venta' idVenta='".$ventas[$i]["id"]."'><i class='fa fa-pencil'></i></button><button class='btn btn-danger btn-sm btnEliminarVenta' title='Eliminar Venta' idVenta='".$ventas[$i]["id"]."'><i class='fa fa-times'></i></button></div>";}
+							$botones="<div class='btn-group'><button class='btn btn-info btn-sm btnImprimirFactura' factura='".$ventas[$i]["factura"]."' title='Imprimir'><i class='fa fa-print'></i></button><button class='btn btn-success btn-sm btnVerDetallesVenta' title='Ver Detalles' data-toggle='modal' data-target='#modalVerDetallesVenta' idVenta='".$ventas[$i]["id"]."'><i class='fa fa-eye'></i></button><button class='btn btn-danger btn-sm btnEliminarVenta' title='Anular Venta' idVenta='".$ventas[$i]["id"]."'><i class='fa fa-times'></i></button></div>";}
 						else{
 							$botones="<div class='btn-group'><button class='btn btn-info btn-sm btnImprimirFactura' factura='".$ventas[$i]["factura"]."' title='Imprimir'><i class='fa fa-print'></i></button></div>";}
 						$datosJson.='[
 										"'.$ventas[$i]["factura"].'",
 										"'.$respuCliente["nombre"].'",
 										"'.$respuVendedor["nombre"].'",
-										"'.$ventas[$i]["metodo_pago"].'",
 										"$ '.number_format($ventas[$i]["subtotalventa"]).'",
 										"$ '.number_format($ventas[$i]["total"]).'",
 										"'.$ventas[$i]["fecha"].'",

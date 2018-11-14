@@ -21,17 +21,18 @@ class AjaxTablaRecibo{
 						# Traemos los datos del usuario vendedor
 						$respuVendedor=ControladorUsuarios::ctrMostrarUsuarios($item,$recibos[$i]["id_usuario"]);
 						$pagoAculumado=ControladorRecibo::ctrPagoAcumulado($recibos[$i]["num_recibo"]);
-						$botones="<div class='btn-group'><button class='btn btn-info btn-sm btnImprimirRecibo' recibo='".$recibos[$i]["num_recibo"]."' title='Imprimir'><i class='fa fa-print'></i></button><button class='btn btn-success btn-sm btnVerDRecibo' data-toggle='modal' data-target='#modalVerDetalles' idRecibo='".$recibos[$i]["num_recibo"]."' title='Ver Detalles'><i class='fa fa-eye'></i></button><button class='btn btn-warning btn-sm btnEditarRecibo' data-toggle='modal' data-target='#modalEditarRecibo' title='Editar Recibo' idRecibo='".$recibos[$i]["num_recibo"]."'><i class='fa fa-pencil'></i></button><button class='btn btn-danger btn-sm btnEliminarRecibo' title='Eliminar Recibo' idRecibo='".$recibos[$i]["num_recibo"]."'><i class='fa fa-times'></i></button></div>";
-						$datosJson.='[
-										"'.$recibos[$i]["num_recibo"].'",
-										"'.$respuCliente["nombre"].'",
-										"'.$respuVendedor["nombre"].'",
-										"$ '.number_format($pagoAculumado[0]).'",
-										"'.$recibos[$i]["fecha"].'",
-										"'.$botones.'"
-									],';
+						if($pagoAculumado[0]!=null){
+							$botones="<div class='btn-group'><button class='btn btn-info btn-sm btnImprimirRecibo' recibo='".$recibos[$i]["num_recibo"]."' title='Imprimir'><i class='fa fa-print'></i></button><button class='btn btn-success btn-sm btnVerDRecibo' data-toggle='modal' data-target='#modalVerDetalles' idRecibo='".$recibos[$i]["num_recibo"]."' title='Ver Detalles'><i class='fa fa-eye'></i></button><button class='btn btn-warning btn-sm btnEditarRecibo' title='Editar' data-toggle='modal' data-target='#modalEditarRecibo' idRecibo='".$recibos[$i]["num_recibo"]."'><i class='fa fa-pencil'></i></button><button class='btn btn-primary btn-sm btnPagosRecibo' data-toggle='modal' data-target='#modalPagosRecibo' title='Ingresar Pago' idRecibo='".$recibos[$i]["num_recibo"]."'><i class='fa fa-plus'></i></button><button class='btn btn-danger btn-sm btnEliminarRecibo' title='Eliminar Recibo' idRecibo='".$recibos[$i]["num_recibo"]."'><i class='fa fa-times'></i></button></div>";
+							$datosJson.='[
+											"'.$recibos[$i]["num_recibo"].'",
+											"'.$respuCliente["nombre"].'",
+											"'.$respuVendedor["nombre"].'",
+											"$ '.number_format($pagoAculumado[0]).'",
+											"'.$recibos[$i]["fecha"].'",
+											"'.$botones.'"
+										],';
 
-					}
+						}}
 					$datosJson=substr($datosJson,0,-1);
 					$datosJson.=']
 			}';

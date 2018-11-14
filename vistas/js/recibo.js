@@ -130,16 +130,11 @@ $(".form-CrearRecibo").on("change","input#numCheque",function(){
 	listarMetodosPagoRecibo(); // Listamos el método de pago
 });
 
-
 /* ========================================================================================================
 											EDITAR RECIBOS
 ======================================================================================================== */
-// Agregamos formato a las cajas
-$(".editarAcumulado").number(true,0);
-$(".editarPago").number(true,0);
-
 // Traemos los datos cuando se de click en el botón editar Recibo
-$(".tablaRecibos").on("click",".btnEditarRecibo",function(){
+$(".tablaRecibos").on("click","button.btnEditarRecibo",function(){
 	var numRecibo=$(this).attr("idRecibo");
 	var datos=new FormData();
 	datos.append("numRecibo",numRecibo);
@@ -152,43 +147,120 @@ $(".tablaRecibos").on("click",".btnEditarRecibo",function(){
 		processData:false,
 		dataType:"json",
 		success:function(respuesta){
+			// console.log("respuesta", respuesta);
 			$("#editarNumRecibo").val(respuesta["num_recibo"]);
-			$("#editarCliente").val(respuesta["id_cliente"]);
-			$("#editarObservaciones").val(respuesta["observaciones"]);
-			$("#editarAcumulado").val(respuesta[6]);
-			$("#editarAcumuladoSinP").val(respuesta[6]);}
+			$("#editarClienteRecibo").val(respuesta["id_cliente"]);
+			$("#editarObRecibo").val(respuesta["observaciones"]);
+			var datos2=new FormData();
+			datos2.append("numReciboDetalles",numRecibo);
+			$.ajax({
+				url:"ajax/recibo.ajax.php",
+				type:"POST",
+				data:datos2,
+				cache:false,
+				contentType:false,
+				processData:false,
+				dataType:"json",
+				success:function(detalles){
+					$(".detalles").empty(); // Limpiamos la caja detalles
+					for(var i=0;i<detalles.length;i++){
+						$(".detalles").append(
+							'<!-- Pago -->'+
+                            '<div class="col-sm-4 col-xs-12 fila">'+
+                                '<div class="input-group" style="width:100%">'+
+                                    '<span class="input-group-addon"><i class="fa fa-dollar"></i></span>'+
+                                    '<input type="text" class="form-control pagosRecibos" id="'+(i+1)+'" value="'+detalles[i]["pago"]+'" required>'+
+                                    '<input type="hidden" name="idPagosRecibos[]" value="'+detalles[i]["id"]+'">'+
+                                    '<input type="hidden" name="pagosRecibos[]" id="sinP'+(i+1)+'" value="'+detalles[i]["pago"]+'">'+
+                                '</div>'+
+                            '</div>'+
+                            '<!-- Método -->'+
+                            '<div class="col-sm-4 col-xs-12 fila">'+
+                                '<div class="input-group" style="width:100%">'+
+                                    '<span class="input-group-addon"><i class="fa fa-tag"></i></span>'+
+                                    '<input type="text" class="form-control" value="'+detalles[i]["metodo_pago"]+'" readonly>'+
+                                '</div>'+
+                            '</div>'+
+                            '<!-- Fecha -->'+
+                            '<div class="col-sm-4 col-xs-12 fila">'+
+                                '<div class="input-group" style="width:100%">'+
+                                    '<span class="input-group-addon"><i class="fa fa-calendar"></i></span>'+
+                                    '<input type="text" class="form-control" value="'+detalles[i]["fecha"]+'" readonly>'+
+                                '</div>'+
+                            '</div>'
+						);}
+					$(".pagosRecibos").number(true,0);}
+			});}
+	});
+});
+
+// Modificación de pagos en Editar Recibo
+$(".form-EditarRecibo").on("keyup","input.pagosRecibos",function(){
+	var id=$(this).attr("id");
+	var valor=$(this).val();
+	$("#sinP"+id).val(valor);
+});
+
+
+/* ========================================================================================================
+											PAGOS RECIBOS
+======================================================================================================== */
+// Agregamos formato a las cajas
+$(".pagoAcumulado").number(true,0);
+$(".pago").number(true,0);
+
+// Traemos los datos cuando se de click en el botón Pagos Recibo
+$(".tablaRecibos").on("click","button.btnPagosRecibo",function(){
+	var numRecibo=$(this).attr("idRecibo");
+	var datos=new FormData();
+	datos.append("numRecibo",numRecibo);
+	$.ajax({
+		url:"ajax/recibo.ajax.php",
+		type:"POST",
+		data:datos,
+		cache:false,
+		contentType:false,
+		processData:false,
+		dataType:"json",
+		success:function(respuesta){
+			$("#pagoNumRecibo").val(respuesta["num_recibo"]);
+			$("#pagoCliente").val(respuesta["id_cliente"]);
+			$("#pagoObservaciones").val(respuesta["observaciones"]);
+			$("#pagoAcumulado").val(respuesta[6]);
+			$("#pagoAcumuladoSinP").val(respuesta[6]);}
 	});
 });
 
 // Selección de método de pago
-$(".form-EditarRecibo").on("change","#editarMetodoPago",function(){
-	$(".form-EditarRecibo #listaMetodosPagoEditar").val(""); // Limpiamos el value
+$(".form-PagosRecibo").on("change","#pagoMetodo",function(){
+	$(".form-PagosRecibo #pagoListaMetodos").val(""); // Limpiamos el value
+	$(".pagoCajasMetodo").empty();
 	var seleccion=$(this).val();
 	// Mostramos las cajas correspondientes al método de pago
 	if(seleccion==""){
-		$(".cajasMetodoPagoEditar").css("display","none");
-		$(".editarPago").val(""); // Limpiamos la caja
-		$(".editarPago").attr("disabled",true);}
+		$(".pagoCajasMetodo").css("display","none");
+		$(".pago").val(""); // Limpiamos la caja
+		$(".pago").attr("disabled",true);}
 	else if(seleccion=="Efectivo"){
-		$(".cajasMetodoPagoEditar").css("display","none");
-		$(".editarPago").val(""); // Limpiamos la caja
-		$(".editarPago").removeAttr("disabled");
-		$("#editarPago").focus();
-		listarMetodosPagoEditar();}
+		$(".pagoCajasMetodo").css("display","none");
+		$(".pago").val(""); // Limpiamos la caja
+		$(".pago").removeAttr("disabled");
+		$("#pago").focus();
+		pagoListarMetodos();}
 	else if(seleccion=="T"){
-		$(".cajasMetodoPagoEditar").css("display","block");
-		$(".editarPago").val(""); // Limpiamos la caja
-		$(".editarPago").removeAttr("disabled");
-		$(".cajasMetodoPagoEditar").html(
+		$(".pagoCajasMetodo").css("display","block");
+		$(".pago").val(""); // Limpiamos la caja
+		$(".pago").removeAttr("disabled");
+		$(".pagoCajasMetodo").html(
             '<div class="input-group">'+
                 '<input type="text" class="form-control" name="codigoTransaccion" id="codigoTransaccion" placeholder="Ingrese Código de Transacción" required>'+
                 '<span class="input-group-addon" id="spanAddon"><i class="fa fa-lock"></i></span>'+
             '</div>');}
 	else{
-		$(".cajasMetodoPagoEditar").css("display","block");
-		$(".editarPago").val(""); // Limpiamos la caja
-		$(".editarPago").removeAttr("disabled");
-		$(".cajasMetodoPagoEditar").html(
+		$(".pagoCajasMetodo").css("display","block");
+		$(".pago").val(""); // Limpiamos la caja
+		$(".pago").removeAttr("disabled");
+		$(".pagoCajasMetodo").html(
             '<div class="input-group">'+
             	'<span class="input-group-addon" id="spanAddon"><i class="fa fa-gg"></i></span>'+
                 '<input type="text" class="form-control" name="numCheque" id="numCheque" placeholder="Ingrese el Número del Cheque" required>'+
@@ -196,19 +268,19 @@ $(".form-EditarRecibo").on("change","#editarMetodoPago",function(){
 });
 
 // Cambio cuando hay una selección de Tarjeta
-$(".form-EditarRecibo").on("change","input#codigoTransaccion",function(){
-	listarMetodosPagoEditar();
+$(".form-PagosRecibo").on("change","input#codigoTransaccion",function(){
+	pagoListarMetodos();
 });
 
 // Cambio cuando hay una selección de Tarjeta
-$(".form-EditarRecibo").on("change","input#numCheque",function(){
-	listarMetodosPagoEditar();
+$(".form-PagosRecibo").on("change","input#numCheque",function(){
+	pagoListarMetodos();
 });
 
 // Aquí cada que presionamos un botón en el pago, lo enviamos a un input
-$(".form-EditarRecibo").on("keyup","input.editarPago",function(){
+$(".form-PagosRecibo").on("keyup","input.pago",function(){
 	var valor=$(this).val();
-	$("#editarPagoSinP").val(valor);
+	$("#pagoPagoSinP").val(valor);
 });
 
 /* ========================================================================================================
@@ -306,7 +378,7 @@ $(".tablaRecibos").on("click",".btnEliminarRecibo",function(){
 });
 
 /* ========================================================================================================================
-IMPRIMIR FACTURAS
+IMPRIMIR RECIBOS
 ======================================================================================================================== */
 $(".tablaRecibos").on('click',"button.btnImprimirRecibo",function(){
 	var recibo=$(this).attr("recibo");
@@ -438,11 +510,11 @@ function listarMetodosPagoRecibo(){
 }
 
 // Listar el método de pago al Editar el recibo
-function listarMetodosPagoEditar(){
-	if($("#editarMetodoPago").val()=="Efectivo"){
-		$("#listaMetodosPagoEditar").val("Efectivo");}
-	else if($("#editarMetodoPago").val()=="T"){
-		$("#listaMetodosPagoEditar").val($("#editarMetodoPago").val()+"-"+$("#codigoTransaccion").val());}
+function pagoListarMetodos(){
+	if($("#pagoMetodo").val()=="Efectivo"){
+		$("#pagoListaMetodos").val("Efectivo");}
+	else if($("#pagoMetodo").val()=="T"){
+		$("#pagoListaMetodos").val($("#pagoMetodo").val()+"-"+$("#codigoTransaccion").val());}
 	else{
-		$("#listaMetodosPagoEditar").val($("#editarMetodoPago").val()+"-"+$("#numCheque").val());}
+		$("#pagoListaMetodos").val($("#pagoMetodo").val()+"-"+$("#numCheque").val());}
 }

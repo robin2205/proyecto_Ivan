@@ -1,35 +1,19 @@
 <?php
-	# Treamos la información de las ventas
-	$item=null;
-	$valor=null;
-	$ventas=ControladorVentas::ctrMostrarVentas($item,$valor);
-	# Treamos la información de los clientes
-	$clientes=ControladorClientes::ctrMostrarCliente($item,$valor);
-	$arrayClientes=array();
-	$arrayListaClientes=array();
-	# Recorremos la ventas
-	foreach($ventas as $key=>$valueVentas){
-		# Recorremos los clientes
-		foreach($clientes as $key=>$valueClientes){
-			# Comparamos si los clientes son iguales a los id_clientes de las Ventas
-			if($valueClientes["id"]==$valueVentas["id_cliente"]){
-				# Capturamos los Clientes en un array
-				array_push($arrayClientes,$valueClientes["nombre"]);
-				# Capturamos los nombres y valores netos de los Clientes en un mismo array
-				$arrayListaClientes=array($valueClientes["nombre"]=>$valueVentas["total"]);
-				# Sumamos los totales de cada Cliente
-				foreach($arrayListaClientes as $key=>$value){
-					$sumaTotalesClientes[$key]+=$value;}
-			}
-		}
-	}
-	# Evitamos repetir nombres
-	$noRepetirNombres=array_unique($arrayClientes);
+	# Treamos la información de los clientes que tienen compras
+	$clientes=ControladorClientes::ctrMostrarClientesConCompras();
+	if(count($clientes)>=10){
+		$limite=10;}
+	else{
+		$limite=count($clientes);}
+	$ventas=ControladorVentas::crtSumasTotalesVentas($limite);
+	for($i=0;$i<count($ventas);$i++){
+		$infoClientes=ControladorClientes::ctrMostrarCliente("id",$ventas[$i]["id_cliente"]);
+		$ventas[$i]["id_cliente"]=$infoClientes["nombre"];}
 	# Verificamos que el array si tenga datos
-	if(count($noRepetirNombres)>0){
+	if(count($ventas)>0){
 		echo '<div class="box box-danger">
 				<div class="box-header with-border">
-					<h3 class="box-title">Clientes</h3>
+					<h3 class="box-title">Clientes <small style="color:red;">(Estos son los '.$limite.' clientes con mayores compras)</small></h3>
 				</div>
 				<div class="box-body">
 					<div class="chart-responsive">
@@ -43,9 +27,9 @@
 					element:"bar-chart2",
 					resize:true,
 					data:[';
-					foreach($noRepetirNombres as $value){
-						echo "{y:'".$value."',a:".$sumaTotalesClientes[$value]."},";}
-				echo '],
+					for($i=0;$i<count($ventas);$i++){
+						echo "{y:'".$ventas[$i]["id_cliente"]."',a:".$ventas[$i]["suma"]."},";}
+					echo '],
 					barColors:["#f56954"],
 					xkey:"y",
 					ykeys:["a"],
@@ -55,7 +39,3 @@
 				});
 				</script>';}
 ?>
-
-<!-- =========================== GRÁFICO DE VENDEDORES =========================== -->
-
-<!-- Creamos el script necesario para poder mostrar los datos en la gráfica -->

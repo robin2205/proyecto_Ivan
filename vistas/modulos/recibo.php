@@ -3,7 +3,8 @@
     <section class="content-header">
         <h1>Recibo de Venta</h1>
         <ol class="breadcrumb">
-            <li><i class="fa fa-home"></i> Inicio</li>
+            <li><a href="inicio"><i class="fa fa-home"></i> Inicio</a></li>
+            <li class="active">Recibo de Caja</li>
         </ol>
     </section>
 
@@ -63,7 +64,6 @@
                             <div class="col-xs-12">
                                 <label for="observacionesRecibo">Observaciones</label>
                                 <textarea class="form-control" name="observacionesRecibo" id="observacionesRecibo" onkeypress="return noEnter(event)" required style="height:120px"></textarea>
-                                <input type="hidden" name="proSelRecibo" id="proSelRecibo">
                                 <input type="button" class="btn btn-warning btn-xs pull-right btnLimpiar" value="Limpiar" style="margin-top:5px">
                             </div>
                         </div>

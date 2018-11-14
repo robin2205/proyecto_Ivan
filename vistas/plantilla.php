@@ -33,7 +33,7 @@
     <script src="vistas/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="vistas/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
     <script src="vistas/bower_components/fastclick/lib/fastclick.js"></script>
-    <script src="vistas/dist/js/adminlte.min.js"></script>
+    <script src="vistas/dist/js/adminlte.js"></script>
     <!-- DataTables -->
     <script src="vistas/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="vistas/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
@@ -75,7 +75,7 @@
             // Verificamos que venga información en la varibale ruta (URL's Amigables)
             if(isset($_GET["ruta"])){
                 # Creamos nuestra lista blanca de rutas permitidas
-                if($_GET["ruta"]=="inicio" || $_GET["ruta"]=="usuarios" || $_GET["ruta"]=="categorias" || $_GET["ruta"]=="productos" || $_GET["ruta"]=="clientes" || $_GET["ruta"]=="ventas" || $_GET["ruta"]=="editar-venta" || $_GET["ruta"]=="recibo" || $_GET["ruta"]=="admon-recibos" || $_GET["ruta"]=="reportes" || $_GET["ruta"]=="salir"){
+                if($_GET["ruta"]=="inicio" || $_GET["ruta"]=="usuarios" || $_GET["ruta"]=="categorias" || $_GET["ruta"]=="productos" || $_GET["ruta"]=="clientes" || $_GET["ruta"]=="ventas" || $_GET["ruta"]=="recibo" || $_GET["ruta"]=="admon-recibos" || $_GET["ruta"]=="egreso" || $_GET["ruta"]=="admon-egreso" || $_GET["ruta"]=="reportes" || $_GET["ruta"]=="cierre-caja" || $_GET["ruta"]=="lista-cierres" || $_GET["ruta"]=="salir"){
                     include 'modulos/'.$_GET["ruta"].'.php';}
                 else{
                     include 'modulos/404.php';}}
@@ -102,5 +102,7 @@
     <script src="vistas/js/ventas.js"></script>
     <script src="vistas/js/reportes.js"></script>
     <script src="vistas/js/recibo.js"></script>
+    <script src="vistas/js/egreso.js"></script>
+    <script src="vistas/js/cierre-caja.js"></script>
 </body>
 </html>

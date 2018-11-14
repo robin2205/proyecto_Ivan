@@ -11,19 +11,19 @@
 		$fechaInicial=null;
 		$fechaFinal=null;}
 	# Traemos los datos de las ventas por Rango de Fechas
-	$respuesta=ControladorVentas::ctrRangoFechasVentas($fechaInicial,$fechaFinal);
+	$respuesta=ControladorVentas::ctrRangoFechasVentas($fechaInicial,$fechaFinal,"AC");
 	$arrayFechas=array();
-	$arrayDatos=array();
+	$arrayVentas=array();
 	$arraySumaPagoMes=array();
 	foreach($respuesta as $key=>$value){
 		# Capturamos solo el año y el mes de la Fecha
-		$fecha=substr($value["fecha"],0,7);
+		$fecha=substr($value["fecha"],0,10);
 		# Llenamos el array de las fechas con los datos
 		array_push($arrayFechas,$fecha);
 		# Capturamos los totales de las ventas dentro de un array donde los indices serán las fechas
-		$arrayDatos=array($fecha=>$value["total"]);
+		$arrayVentas=array($fecha=>$value["total"]);
 		# Sumamos los totales que ocurrieron en el mismo mes
-		foreach($arrayDatos as $key=>$value){
+		foreach($arrayVentas as $key=>$value){
 			$arraySumaPagoMes[$key]+=$value;}
 	}
 	/* Como el arrayFechas tiene más indices que el arraySumaPagoMes,

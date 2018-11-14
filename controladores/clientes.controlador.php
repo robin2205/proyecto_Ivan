@@ -2,8 +2,13 @@
 class ControladorClientes{
 	// Método para Mostrar un Cliente Especificio
 	static public function ctrMostrarCliente($item,$valor){
-		$tabla="clientes";
-		$respuesta=ModeloClientes::mdlMostrarCliente($tabla,$item,$valor);
+		$respuesta=ModeloClientes::mdlMostrarCliente("clientes",$item,$valor);
+		return $respuesta;
+	}
+
+	// Método para pedir Clientes con compras
+	public function ctrMostrarClientesConCompras(){
+		$respuesta=ModeloClientes::mdlMostrarClientesConCompras("clientes");
 		return $respuesta;
 	}
 

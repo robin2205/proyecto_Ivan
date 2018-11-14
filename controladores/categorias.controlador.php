@@ -109,7 +109,6 @@ class ControladorCategorias{
 							if(result.value){
 								window.location="categorias";}
 						});
-					</script>';}
-		}
+					</script>';}}
 	}
 }

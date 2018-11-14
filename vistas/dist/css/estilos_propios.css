@@ -15,12 +15,28 @@
 	margin-bottom: -15px;
 }
 .form-CrearVenta,
-.form-CrearRecibo{
+.form-CrearRecibo,
+.form-CrearEgreso,
+.cierre_caja{
 	padding: 10px;
 }
 .form-CrearVenta .row,
-.form-CrearRecibo .row{
+.form-CrearRecibo .row,
+.form-DetallePagosVenta .row,
+.form-CrearEgreso .row,
+.form-EditarRecibo .fila,
+.cierre_caja .row{
 	margin-bottom: 10px;
+}
+#detaTotal, #totalPagado, #valorCaja, .efectivoCaja{
+	color: red;
+	font-weight: bold;
+}
+#obserCierre{
+	height: 380px;
+}
+#obsCaja{
+	height: 100px;
 }
 
 

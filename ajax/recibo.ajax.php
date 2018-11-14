@@ -36,7 +36,7 @@ class AjaxRecibo{
 	// Traer Detalles Recibo
 	public $numReciboDetalles;
 	public function ajaxDetallesRecibo(){
-		$respuesta=ControladorRecibo::ctrTrarDetalleRecibos("num_recibo",$this->numReciboDetalles);
+		$respuesta=ControladorRecibo::ctrTraerDetalleRecibos("num_recibo",$this->numReciboDetalles);
 		echo json_encode($respuesta);
 	}
 }

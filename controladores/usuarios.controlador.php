@@ -24,7 +24,7 @@ class ControladorUsuarios{
 				$respuesta=ModeloUsuarios::mdlTraerUsuarios($tabla,$item,$valor);
 				# Validamos que nos trae la respuesta
 				if($respuesta["usuario"]==$_POST["ingUsuario"] && $respuesta["password"]==$encriptar){
-					if($respuesta["estado"]==1 && $respuesta["iniciada"]==0){
+					if($respuesta["estado"]==1){
 						# Creamos las variables de Session
 						$_SESSION["iniciarSesion"]="ok";
 						$_SESSION["id"]=$respuesta["id"];
@@ -45,10 +45,6 @@ class ControladorUsuarios{
 						$item2="id";
 						$valor2=$respuesta["id"];
 						ModeloUsuarios::mdlActualizarUsuario($tabla,$item1,$valor1,$item2,$valor2);
-
-						# Realizamos la actualización de la Sesión iniciada
-						ModeloUsuarios::mdlActualizarUsuario($tabla,"iniciada",1,$item2,$valor2);
-
 						# Redireccionamos
 						echo '<script>
 								window.location="inicio";

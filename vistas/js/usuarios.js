@@ -127,6 +127,8 @@ $("#nuevoUsuario").change(function(){
 // ELIMINAR UN USUARIO
 $(".tablaUsuarios").on("click","button.btnEliminarUsuario",function(){
 	var usuarioEliminar=$(this).attr("idUsuario");
+	var fotoUsuario=$(this).attr("fotoUsuario");
+	var usuario=$(this).attr("usuario");
 	swal({
 		type: "warning",
 		title: "Advertencia",
@@ -140,6 +142,8 @@ $(".tablaUsuarios").on("click","button.btnEliminarUsuario",function(){
 		if(result.value){
 			var datos=new FormData();
 			datos.append("usuarioEliminar",usuarioEliminar);
+			datos.append("fotoUsuario",fotoUsuario);
+			datos.append("usuario",usuario);
 			$.ajax({
 				url:"ajax/usuarios.ajax.php",
 				type:"POST",

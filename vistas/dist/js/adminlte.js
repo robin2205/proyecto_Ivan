@@ -780,13 +780,13 @@ throw new Error('AdminLTE requires jQuery')
   }
 
   PushMenu.prototype.open = function () {
-    var windowWidth = $(window).width()
+    var windowWidth = $(window).width();
     if (windowWidth > this.options.collapseScreenSize) {
       $('body').removeClass(ClassName.collapsed)
         .trigger($.Event(Event.expanded));
     }
     else {
-      $('body').addClass(ClassName.open)
+      $('body').removeClass(ClassName.collapsed).addClass(ClassName.open)
         .trigger($.Event(Event.expanded));
     }
   }

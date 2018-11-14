@@ -4,7 +4,11 @@
 	$valor=null;
 	$orden="ventas";
 	$productos=ControladorProductos::ctrTraerProductos($item,$valor,$orden);
-	# Creamos un array de colores, para este caso 7, que son los productos que mostraremos
+	if(count($productos)>=7){
+		$cantidadAMostrar=7;}
+	else{
+		$cantidadAMostrar=count($productos);}
+	# Creamos un array de colores, para este caso 7, que son los productos máximos que mostraremos
 	$arrayColores=array("#B0E0E6","#87CEEB","#1E90FF","#AFEEEE","#7FFF","#5F9EA0","#4682B4");
 	# Obtenemos la suma de las ventas en productos
 	$sumaVentas=ControladorProductos::ctrMostrarSumaVentas();
@@ -28,8 +32,8 @@
 					# Válidamos que si hayan sumas de ventas
 					if($sumaVentas["total"]>0){
 						# Creamos un ciclo para que muestre sólo 7 productos
-						for($i=0;$i<7;$i++){
-							echo '<li><i class="fa fa-arrow-circle-right text-'.$arrayColores[$i].'"></i> '.$productos[$i]["descripcion"].'</li>';}
+						for($i=0;$i<$cantidadAMostrar;$i++){
+							echo '<li>'.($i+1).'. '.$productos[$i]["descripcion"].'</li>';}
 					}
 				?>
 				</ul>
@@ -41,17 +45,16 @@
 		<?php
 			echo '<li>
 					<a>
-						<b>Productos (Los 7 primeros)</b>
+						<b>Productos (Los '.$cantidadAMostrar.' primeros)</b>
 						<span class="pull-right"><b>% de Venta</b></span>
 					</a>
 				</li>';
 			# Válidamos que si hayan sumas de ventas
 			if($sumaVentas["total"]>0){
-				# Creamos un ciclo para que muestre sólo 7 productos
-				for($i=0;$i<7;$i++){
+				# Creamos un ciclo para que muestre sólo los 7 o menos productos
+				for($i=0;$i<$cantidadAMostrar;$i++){
 					echo '<li>
 							<a>
-								<img src="'.$productos[$i]["imagen"].'" class="img-thumbnail" width="40px" style="margin-right:10px">
 								'.$productos[$i]["descripcion"].'
 								<span class="pull-right text-'.$arrayColores[$i].'"> '.ceil($productos[$i]["ventas"]*100/$sumaVentas["total"]).'%</span>
 							</a>
@@ -70,7 +73,7 @@
 	<?php
 		# Válidamos que si hayan sumas de ventas
 		if($sumaVentas["total"]>0){
-		  	for($i=0;$i<7;$i++){
+		  	for($i=0;$i<$cantidadAMostrar;$i++){
 		  		echo "{
 				     	value:".$productos[$i]["ventas"].",
 				     	color:'".$arrayColores[$i]."',

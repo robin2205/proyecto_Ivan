@@ -17,7 +17,7 @@ function validar_numero(e){
 function validar_textonumero(e){
 	tecla=(document.all)?e.keyCode:e.which;
 	if(tecla==8) return true;
-	patron=/[A-Za-z0-9\sáéíóúñÁÉÍÓÚÑ., ]/;
+	patron=/[A-Za-z0-9\sáéíóúñÁÉÍÓÚÑ ]/;
 	tecla_final=String.fromCharCode(tecla);
 	return patron.test(tecla_final);
 }

@@ -37,7 +37,6 @@ if($_SESSION["perfil"]=="Especial"){
                             <th>Factura</th>
                             <th>Cliente</th>
                             <th>Vendedor</th>
-                            <th>Registro de Pago</th>
                             <th>Subtotal</th>
                             <th>Total</th>
                             <th>Fecha</th>
@@ -48,4 +47,74 @@ if($_SESSION["perfil"]=="Especial"){
             </div>
         </div>
     </section>
+</div>
+
+<!-- MODAL PARA VER DETALLES DE VENTA -->
+<div id="modalVerDetallesVenta" class="modal fade modales" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <!-- Contenido del Modal-->
+        <div class="modal-content">
+            <form role="form" class="form-DetallePagosVenta">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">X</button>
+                    <h3 class="modal-title">
+                        <i class="fa fa-eye"></i> Detalles Formas de Pagos
+                    </h3>
+                </div>
+                <div class="modal-body">
+                    <div class="box-body">
+                        <div class="row">
+                            <!-- Factura -->
+                            <div class="col-sm-6 col-xs-12 pc">
+                                <div class="input-group" style="width:100%">
+                                    <span class="input-group-addon" id="spanAddon"><i class="fa fa-key"></i></span>
+                                    <input type="text" class="form-control" id="detaFactura" readonly>
+                                </div>
+                            </div>
+                            <!-- Cliente -->
+                            <div class="col-sm-6 col-xs-12">
+                                <div class="input-group" style="width:100%">
+                                    <span class="input-group-addon" id="spanAddon"><i class="fa fa-user"></i></span>
+                                    <input type="text" class="form-control" id="detaCliente" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <!-- Vendedor -->
+                            <div class="col-sm-6 col-xs-12 pc">
+                                <div class="input-group" style="width:100%">
+                                    <span class="input-group-addon" id="spanAddon"><i class="fa fa-address-card"></i></span>
+                                    <input type="text" class="form-control" id="detaUsuario" readonly>
+                                </div>
+                            </div>
+                            <!-- Total Venta -->
+                            <div class="col-sm-6 col-xs-12">
+                                <div class="input-group" style="width:100%">
+                                    <span class="input-group-addon" id="spanAddon"><i class="ion ion-social-usd"></i></span>
+                                    <input type="text" class="form-control detaTotal" id="detaTotal" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row pago1"></div>
+                        <div class="row pago2"></div>
+                        <div class="row pago3"></div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-top:-25px;">
+                    <div class="row">
+                        <div class="col-sm-6 col-xs-12 pc">
+                            <h4>TOTAL PAGADO</h4>
+                        </div>
+                        <div class="col-sm-6 col-xs-12">
+                            <div class="input-group" style="width:100%">
+                                <span class="input-group-addon" id="spanAddon"><i class="ion ion-social-usd"></i></span>
+                                <input type="text" class="form-control totalPagado" id="totalPagado" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>

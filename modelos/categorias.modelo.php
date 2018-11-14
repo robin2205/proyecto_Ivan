@@ -12,7 +12,6 @@ class ModeloCategorias{
 			return "ok";}
 		else{
 			return "error";}
-		$stmt->close();
 		$stmt=null;
 	}
 
@@ -32,7 +31,6 @@ class ModeloCategorias{
 			# Retornamos un fetchAll por ser más de una línea la que necesitamos devolver
 			return $stmt->fetchAll();
 		}
-		$stmt->close();
 		$stmt=null;
 	}
 
@@ -46,7 +44,6 @@ class ModeloCategorias{
 			return "ok";}
 		else{
 			return "error";}
-		$stmt->close();
 		$stmt=null;
 	}
 
@@ -59,7 +56,6 @@ class ModeloCategorias{
 			return "ok";}
 		else{
 			return "error";}
-		$stmt->close();
 		$stmt=null;
 	}
 }

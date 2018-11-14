@@ -13,8 +13,8 @@ class ControladorRecibo{
 	}
 
 	// Este método sirve para mostrar uno o todos los detalles de recibos
-	public function ctrTrarDetalleRecibos($item,$valor){
-		$respuesta=ModeloRecibo::mdlTrarDetalleRecibos("detalles_recibo",$item,$valor);
+	static public function ctrTraerDetalleRecibos($item,$valor){
+		$respuesta=ModeloRecibo::mdlTraerDetalleRecibos("detalles_recibo",$item,$valor);
 		return $respuesta;
 	}
 
@@ -141,10 +141,72 @@ class ControladorRecibo{
 		}
 	}
 
-	// Este método permite el ingreso de un pago al recibo
+	// Este método permite la edición de un recibo al sistema
 	public function ctrEditarRecibo(){
-		if(isset($_POST["editarNumRecibo"]) || isset($_POST["editarMetodoPago"]) || isset($_POST["editarPago"]) || isset($_POST["editarAcumulado"])){
-			if($_POST["editarPago"]==0){
+		if(isset($_POST["editarNumRecibo"]) || isset($_POST["editarObRecibo"])){
+			if(preg_match('/^[0-9]+$/',$_POST["editarNumRecibo"]) && preg_match('/^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ_\-\,\.\:\"\'\;\s\d\(\)]*$/',$_POST["editarObRecibo"])){
+				$band=false;
+				for($i=0;$i<count($_POST["pagosRecibos"]);$i++){
+					if(!preg_match('/^[0-9]+$/',$_POST["pagosRecibos"][$i]) || !preg_match('/^[0-9]+$/',$_POST["idPagosRecibos"][$i])){
+						$band=true;}}
+				if($band==true){
+					# Mostramos una alerta suave
+					echo '<script>
+							swal({
+								type: "error",
+								title: "Error",
+								text: "¡La información presento problemas. No se permiten caracteres especiales o algún dato fue editado de forma incorrecta!",
+								showConfirmButton: true,
+								confirmButtonText: "Cerrar"
+							}).then((result)=>{
+								if(result.value){
+									window.location="admon-recibos";}
+							});
+						</script>';}
+				else{
+					# Ponemos mayúsculas iniciales, pero convertimos el string en minúsculas primero
+					$_POST["editarObRecibo"]=ucwords(mb_strtolower($_POST["editarObRecibo"]));
+					# Actualizamos la Observación
+					$info=array("observaciones"=>$_POST["editarObRecibo"],"num_recibo"=>$_POST["editarNumRecibo"]);
+					ModeloRecibo::mdlEditarOb("recibos",$info);
+					# Actualizamos el o los Pagos editados
+					for($i=0;$i<count($_POST["pagosRecibos"]);$i++){
+						ModeloVentas::mdlActualizarUnDato("detalles_recibo","pago",$_POST["pagosRecibos"][$i],null,$_POST["idPagosRecibos"][$i],"compuesta");}
+					# Mostramos una alerta suave
+					echo '<script>
+							swal({
+								type: "success",
+								title: "OK",
+								text: "¡La información se actualizó correctamente!",
+								showConfirmButton: true,
+								confirmButtonText: "Cerrar"
+							}).then((result)=>{
+								if(result.value){
+									window.location="admon-recibos";}
+							});
+						</script>';}
+			}
+			else{
+				# Mostramos una alerta suave
+				echo '<script>
+						swal({
+							type: "error",
+							title: "Error",
+							text: "¡La información presento problemas. No se permiten caracteres especiales o algún dato fue editado de forma incorrecta!",
+							showConfirmButton: true,
+							confirmButtonText: "Cerrar"
+						}).then((result)=>{
+							if(result.value){
+								window.location="admon-recibos";}
+						});
+					</script>';}
+		}
+	}
+
+	// Este método permite el ingreso de un pago al recibo
+	public function ctrPagosRecibo(){
+		if(isset($_POST["pagoNumRecibo"]) || isset($_POST["pagoMetodo"]) || isset($_POST["pago"]) || isset($_POST["pagoAcumulado"])){
+			if($_POST["pago"]==0){
 				# Mostramos una alerta suave
 				echo '<script>
 						swal({
@@ -158,8 +220,8 @@ class ControladorRecibo{
 								window.location="admon-recibos";}
 						});
 					</script>';}
-			else if(preg_match('/^[0-9]+$/',$_POST["editarNumRecibo"]) && preg_match('/^[a-zA-Z0-9-]+$/',$_POST["editarMetodoPago"]) && preg_match('/^[0-9]+$/',$_POST["editarPago"]) && preg_match('/^[0-9]+$/',$_POST["editarAcumulado"])){
-				$respuesta=ModeloRecibo::mdlCrearDetalleRecibo("detalles_recibo",$_POST["editarNumRecibo"],$_POST["editarPago"],$_POST["editarMetodoPago"]);
+			else if(preg_match('/^[0-9]+$/',$_POST["pagoNumRecibo"]) && preg_match('/^[a-zA-Z0-9-]+$/',$_POST["pagoMetodo"]) && preg_match('/^[0-9]+$/',$_POST["pago"]) && preg_match('/^[0-9]+$/',$_POST["pagoAcumulado"])){
+				$respuesta=ModeloRecibo::mdlCrearDetalleRecibo("detalles_recibo",$_POST["pagoNumRecibo"],$_POST["pago"],$_POST["pagoMetodo"]);
 				if($respuesta=="ok"){
 					# Mostramos una alerta suave
 					echo '<script>

@@ -1,32 +1,29 @@
 <?php
 # Reqerimos los controladores y modelos
-require_once '../../../controladores/recibo.controlador.php';
-require_once '../../../modelos/recibo.modelo.php';
+require_once '../../../controladores/egreso.controlador.php';
+require_once '../../../modelos/egreso.modelo.php';
 require_once '../../../controladores/clientes.controlador.php';
 require_once '../../../modelos/clientes.modelo.php';
 require_once '../../../controladores/usuarios.controlador.php';
 require_once '../../../modelos/usuarios.modelo.php';
 
-class imprimirRecibo{
-public $recibo;
-public function traerImpresionRecibo(){
-# Traemos la información del Recibo
-$valor=$this->recibo;
-$infoRecibo=ControladorRecibo::ctrTraerRecibos("num_recibo",$valor,null,null,"num_recibo");
-# Traemos los detalles de Pagos
-$detalles=ControladorRecibo::ctrTraerDetalleRecibos("num_recibo",$valor);
-# Almacenamos la información de la venta en variables
-$fecha=substr($infoRecibo["fecha"],0,-8);
-$acumulador=0;
+class imprimirEgreso{
+public $egreso;
+public function traerImpresionEgreso(){
+# Traemos la información del egreso
+$valor=$this->egreso;
+$infoEgreso=ControladorEgreso::ctrTraerEgresos("id",$valor,"id");
+# Almacenamos la información del egreso en variables
+$fecha=substr($infoEgreso["fecha"],0,-8);
 
 # Traemos la información del Cliente
 $itemCliente="id";
-$valorCliente=$infoRecibo["id_cliente"];
+$valorCliente=$infoEgreso["id_cliente"];
 $infoCliente=ControladorClientes::ctrMostrarCliente($itemCliente,$valorCliente);
 
 # Traemos la información del Vendedor
 $itemVendedor="id";
-$valorVendedor=$infoRecibo["id_usuario"];
+$valorVendedor=$infoEgreso["id_usuario"];
 $infoVendedor=ControladorUsuarios::ctrMostrarUsuarios($itemVendedor,$valorVendedor);
 
 # Requerimos el tcpdf para trabajar la impresión
@@ -64,7 +61,7 @@ $bloque1=<<<EOF
 				</div>
 			</td>
 			<td style="background-color:white; width:110px; text-align:center; color:red">
-				<br><br><b>RECIBO N°<br>$valor</b>
+				<br><br><b>EGRESO N°<br>$valor</b>
 			</td>
 		</tr>
 	</table>
@@ -132,63 +129,25 @@ $bloque3=<<<EOF
 	</table>
 	<table style="font-size:10px;padding:5px 10px;">
 		<tr>
-			<td style="width:540px;text-align:left;">$infoRecibo[observaciones]</td>
+			<td style="width:540px;text-align:left;">$infoEgreso[observaciones]</td>
 		</tr>
 	</table>
 EOF;
 # Pintamos el bloque 3 creado en el PDF
 $pdf->writeHTML($bloque3,false,false,false,false,'');
 
-# ****************************** BLOQUE 4 MAQUETACIÓN OBSERVACIONES DE LA BD ******************************
+# ****************************** BLOQUE 4 MAQUETACIÓN TOTALIZADO ******************************
+$total=number_format($infoEgreso["valor"],0);
 $bloque4=<<<EOF
-	<table>
-		<tr><td></td></tr>
-	</table>
-	<table style="font-size:10px;padding:5px 10px;border-bottom:1px solid #fff">
-		<tr style="background-color:#D9D9D9">
-			<td style="width:540px;text-align:center"><b>Detalles de Pagos</b></td>
-		</tr>
-	</table>
 	<table style="font-size:10px;padding:5px 10px;">
 		<tr style="background-color:#D9D9D9">
-			<td style="width:270px;text-align:center;"><b>Fecha de Pago</b></td>
-			<td style="width:270px;text-align:left;"><b>Pago</b></td>
+			<td style="width:270px;text-align:center;"><b>Total Entregado</b></td>
+			<td style="width:270px;text-align:left;"><b>$ $total</b></td>
 		</tr>
 	</table>
 EOF;
 # Pintamos el bloque 4 creado en el PDF
 $pdf->writeHTML($bloque4,false,false,false,false,'');
-
-# ****************************** BLOQUE 5 MAQUETACIÓN DETALLES ******************************
-foreach($detalles as $key=>$value){
-if($value["pago"]!=0){
-$acumulador+=$value["pago"];
-$pago="$ ".number_format($value["pago"],0);
-$fechaDetalle=substr($value["fecha"],0,-8);
-$bloque5=<<<EOF
-	<table style="font-size:10px;padding:5px 10px;">
-		<tr>
-			<td style="width:270px;text-align:center">$fechaDetalle</td>
-			<td style="width:270px;text-align:left;">$pago</td>
-		</tr>
-	</table>
-EOF;
-# Pintamos el bloque 4 creado en el PDF
-$pdf->writeHTML($bloque5,false,false,false,false,'');
-}}
-
-# ****************************** BLOQUE 6 MAQUETACIÓN TOTALIZADO ******************************
-$acumulador=number_format($acumulador,0);
-$bloque6=<<<EOF
-	<table style="font-size:10px;padding:5px 10px;">
-		<tr style="background-color:#D9D9D9">
-			<td style="width:270px;text-align:center;"><b>Total Acumulado</b></td>
-			<td style="width:270px;text-align:left;"><b>$ $acumulador</b></td>
-		</tr>
-	</table>
-EOF;
-# Pintamos el bloque 4 creado en el PDF
-$pdf->writeHTML($bloque6,false,false,false,false,'');
 
 /* SALIDA DEL ARCHIVO VISTA PREVIA EN NAVEGADOR*/
 $pdf->Output('recibo'.$valor.'.pdf');
@@ -196,7 +155,7 @@ $pdf->Output('recibo'.$valor.'.pdf');
 }
 
 // OBJETOS INSTANCIADOS
-$a=new imprimirRecibo();
-$a->recibo=$_GET["recibo"];
-$a->traerImpresionRecibo();
+$a=new imprimirEgreso();
+$a->egreso=$_GET["egreso"];
+$a->traerImpresionEgreso();
 ?>

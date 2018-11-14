@@ -29,7 +29,7 @@
                     </li>
                     <li class="treeview">
                         <a>
-                            <i class="fa fa-folder"></i> <span>Recibos</span>
+                            <i class="fa fa-download"></i> <span>Recibos</span>
                             <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>
                             </span>
@@ -41,22 +41,35 @@
                     </li>
                     <li class="treeview">
                         <a>
-                            <i class="fa fa-list-ul"></i> <span>Ventas</span>
+                            <i class="fa fa-upload"></i> <span>Egresos</span>
                             <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>
                             </span>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="ventas"><i class="fa fa-circle"></i> Administrar Ventas</a></li>';}
+                            <li><a href="egreso"><i class="fa fa-circle"></i> Egreso de Caja</a></li>
+                            <li><a href="admon-egreso"><i class="fa fa-circle"></i> Administrar Egresos</a></li>
+                        </ul>
+                    </li>
+                    <li class="treeview">
+                        <a>
+                            <i class="fa fa-list-ul"></i> <span>Otros</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="ventas"><i class="fa fa-circle"></i> Administrar Ventas</a></li>
+                            <li><a href="cierre-caja"><i class="fa fa-circle"></i> Cierre de Caja</a></li>';}
                 # Si es Administrador
                 if($_SESSION["perfil"]=="Administrador"){
-                    echo '<li><a href="#"><i class="fa fa-circle"></i> Gráficas</a></li>';}
+                    echo '<li><a href="reportes"><i class="fa fa-circle"></i> Gráficas</a></li>';}
                 ?>
                 </ul>
             </li>
-            <hr class="hidden-lg hidden-md hidden-sm">
+            <!-- <hr class="hidden-lg hidden-md hidden-sm"> -->
             <li class="hidden-lg hidden-md hidden-sm">
-                <a href="salir" title="Salir"><i class="fa fa-sign-out"></i></a>
+                <a href="salir" title="Salir"><i class="fa fa-sign-out"></i> <span>Salir</span></a>
             </li>
         </ul>
     </section>

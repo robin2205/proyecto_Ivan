@@ -20,6 +20,16 @@ class ModeloClientes{
 		$stmt=null;
 	}
 
+	// Método para Mostrar Clientes con compras
+	static public function mdlMostrarClientesConCompras($tabla){
+		$sql="SELECT * FROM $tabla WHERE total_compras!=0";
+		$stmt=Conexion::conectar()->prepare($sql);
+		$stmt->execute();
+		# Retornamos un fetchAll por ser más de una línea la que necesitamos devolver
+		return $stmt->fetchAll();
+		$stmt=null;
+	}
+
 	// Método para crear un Nuevo Cliente en la BD
 	static public function mdlNuevoCliente($tabla,$datos){
 		$sql="INSERT INTO $tabla(tipo_Cliente,nombre,tipo_Documento,documento,email,contacto,direccion,fecha_nacimiento) VALUES (:tipo_Cliente,:nombre,:tipo_Documento,:documento,:email,:contacto,:direccion,:fecha_nacimiento)";

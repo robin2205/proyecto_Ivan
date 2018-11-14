@@ -63,13 +63,13 @@ class ModeloRecibo{
 	}
 
 	// Método para mostrar uno o todos los detalles de recibos
-	static public function mdlTrarDetalleRecibos($tabla,$item,$valor){
+	static public function mdlTraerDetalleRecibos($tabla,$item,$valor){
 		if($item!=null){
-			$sql="SELECT * FROM $tabla WHERE $item=:$item";
+			$sql="SELECT * FROM $tabla WHERE $item=:$item AND estado=0";
 			$stmt=Conexion::conectar()->prepare($sql);
 			$stmt->bindParam(":".$item,$valor,PDO::PARAM_INT);}
 		else{
-			$sql="SELECT * FROM $tabla";
+			$sql="SELECT * FROM $tabla WHERE estado=0";
 			$stmt=Conexion::conectar()->prepare($sql);}
 		$stmt->execute();
 		# Retornamos un fetchAll por ser más de una línea la que necesitamos devolver
@@ -106,6 +106,16 @@ class ModeloRecibo{
 		$stmt=null;
 	}
 
+	// Método para realizar la actualización de una Observación
+	static public function mdlEditarOb($tabla,$datos){
+		$sql="UPDATE $tabla SET observaciones=:observaciones WHERE num_recibo=:num_recibo";
+		$stmt=Conexion::conectar()->prepare($sql);
+		$stmt->bindParam(":observaciones",$datos["observaciones"],PDO::PARAM_STR);
+		$stmt->bindParam(":num_recibo",$datos["num_recibo"],PDO::PARAM_INT);
+		$stmt->execute();
+		$stmt=null;
+	}
+
 	// Método para eliminar un recibo de la BD
 	static public function mdlEliminarRecibo($tabla,$numRecibo){
 		$sql="DELETE FROM $tabla WHERE num_recibo=:num_recibo";
@@ -121,7 +131,7 @@ class ModeloRecibo{
 
 	// Este método nos ayuda a traer la suma de pagos realizados por Recibo
 	static public function mdlPagoAcumulado($tabla,$numRecibo){
-		$sql="SELECT SUM(pago) FROM $tabla WHERE num_recibo=:num_recibo";
+		$sql="SELECT SUM(pago) FROM $tabla WHERE num_recibo=:num_recibo AND estado=0";
 		$stmt=Conexion::conectar()->prepare($sql);
 		$stmt->bindParam(":num_recibo",$numRecibo,PDO::PARAM_INT);
 		$stmt->execute();
@@ -138,6 +148,17 @@ class ModeloRecibo{
 		$stmt->bindParam(":idUsuario",$idUsuario,PDO::PARAM_INT);
 		$stmt->execute();
 		return $stmt->fetchAll();
+		$stmt=null;
+	}
+
+	// Este método nos ayuda a traer la suma del Efectivo que se ha ingresado por fecha
+	static public function mdlSumaEfectivo($tabla,$metodo,$fecha){
+		$sql="SELECT SUM(pago) FROM $tabla WHERE metodo_pago=:metodo_pago AND fecha like '%$fecha%'";
+		$stmt=Conexion::conectar()->prepare($sql);
+		$stmt->bindParam(":metodo_pago",$metodo,PDO::PARAM_STR);
+		$stmt->execute();
+		# Retornamos un fetch por ser una sola línea la que necesitamos devolver
+		return $stmt->fetch();
 		$stmt=null;
 	}
 }

@@ -24,7 +24,7 @@ if($_SESSION["perfil"]=="Especial"){
                         <div class="row">
                             <!-- Vendedor -->
                             <div class="col-sm-6 col-xs-12 pc">
-                                <div class="input-group" style="width: 100%">
+                                <div class="input-group" style="width:100%">
                                     <span class="input-group-addon" id="spanAddon"><i class="fa fa-user"></i></span>
                                     <input type="text" class="form-control" id="vendedor" value="<?=$_SESSION["nombre"];?>" readonly style="height:38px">
                                     <input type="hidden" name="idVendedor" value="<?=$_SESSION["id"];?>">
@@ -32,14 +32,14 @@ if($_SESSION["perfil"]=="Especial"){
                             </div>
                             <!-- Factura Venta -->
                             <div class="col-sm-6 col-xs-12">
-                                <div class="input-group" style="width: 100%">
+                                <div class="input-group" style="width:100%">
                                     <span class="input-group-addon" id="spanAddon"><i class="fa fa-key"></i></span>
                                     <?php
                                         $item=null;
                                         $valor=null;
                                         $ventas=ControladorVentas::ctrMostrarVentas($item,$valor);
                                         if(!$ventas){
-                                            echo '<input type="text" class="form-control" name="factura" id="factura" maxlength="15" onkeypress="return validar_textonumero(event)" required style="height:38px">';}
+                                            echo '<input type="text" class="form-control" name="factura" id="factura" maxlength="15" onkeypress="return validar_numero(event)" required style="height:38px">';}
                                         else{
                                             foreach($ventas as $key=>$value){}
                                             $factura=$value["factura"]+1;
@@ -51,7 +51,7 @@ if($_SESSION["perfil"]=="Especial"){
                         <div class="row">
                             <!-- Cliente -->
                             <div class="col-sm-6 col-xs-12 pc">
-                                <div class="input-group" style="width: 100%">
+                                <div class="input-group" style="width:100%">
                                     <span class="input-group-addon" id="spanAddon"><i class="fa fa-users"></i></span>
                                     <input type="text" class="form-control" id="seleccionCliente" maxlength="15" onkeypress="return validar_textonumero(event)" required style="height:38px">
                                     <input type="hidden" name="seleccionCliente" id="idCliente">
@@ -67,9 +67,9 @@ if($_SESSION["perfil"]=="Especial"){
                         <!-- Busqueda del Producto -->
                         <div class="row">
                             <div class="col-sm-6 col-xs-12">
-                                <div class="input-group" style="width: 100%">
+                                <div class="input-group" style="width:100%">
                                     <span class="input-group-addon" id="spanAddon"><i class="fa fa-cart-plus"></i></span>
-                                    <input type="text" class="form-control" name="seleccionProducto" id="seleccionProducto" maxlength="15" onkeypress="return validar_numero(event)" required style="height:38px">
+                                    <input type="text" class="form-control" name="seleccionProducto" id="seleccionProducto" maxlength="15" onkeypress="return validar_numero(event)" style="height:38px">
                                 </div>
                             </div>
                         </div>
@@ -104,11 +104,11 @@ if($_SESSION["perfil"]=="Especial"){
                                 </div>
                             </div>
                         </div>
-                        <!-- Método de Pago -->
+                        <!-- Método de Pago N°1 -->
                         <div class="row">
                             <!-- Forma de Pago -->
-                            <div class="col-sm-5 col-xs-12">
-                                <select class="form-control" name="metodoPagoVenta" id="metodoPagoVenta" required style="height: 38px;" disabled>
+                            <div class="col-sm-6 col-xs-12 pc">
+                                <select class="form-control" name="metodoPagoVenta" id="metodoPagoVenta" style="height:38px;">
                                     <option value="">Seleccionar...</option>
                                     <option value="Efectivo">Efectivo</option>
                                     <option value="T">Tarjeta</option>
@@ -119,8 +119,36 @@ if($_SESSION["perfil"]=="Especial"){
                                     <option value="C60">Crédito 60 días</option>
                                 </select>
                             </div>
-                            <div class="col-sm-7 col-xs-12 cajasMetodoPago"></div>
+                            <div class="cajasMetodoPago"></div>
                             <input type="hidden" name="listaMetodosPago" id="listaMetodosPago">
+                        </div>
+                        <!-- Método de Pago N°2 (Anticipo) -->
+                        <div class="row">
+                            <!-- Selección de Recibo -->
+                            <div class="col-sm-6 col-xs-12 pc">
+                                <div class="input-group" style="width:100%">
+                                    <span class="input-group-addon hidden-xs" id="spanAddon"><i class="fa fa-code"></i></span>
+                                    <input type="text" class="form-control" name="recibo" id="recibo" placeholder="Ingrese número de Recibo" onkeypress="return validar_numero(event)" style="height:38px">
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-xs-12 cajaRecibo"></div>
+                        </div>
+                        <!-- Método de Pago N°3 -->
+                        <div class="row">
+                            <!-- Forma de Pago -->
+                            <div class="col-sm-6 col-xs-12 pc">
+                                <select class="form-control" name="metodoTercerPago" id="metodoTercerPago" style="height:38px;">
+                                    <option value="">Seleccionar...</option>
+                                    <option value="T">Tarjeta</option>
+                                    <option value="C">Cheque</option>
+                                    <option value="C15">Crédito 15 días</option>
+                                    <option value="C30">Crédito 30 días</option>
+                                    <option value="C45">Crédito 45 días</option>
+                                    <option value="C60">Crédito 60 días</option>
+                                </select>
+                            </div>
+                            <div class="cajasTercerPago"></div>
+                            <input type="hidden" name="listaTercerPago" id="listaTercerPago">
                         </div>
                         <div class="row">
                             <div class="col-xs-12">

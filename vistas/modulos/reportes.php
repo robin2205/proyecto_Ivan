@@ -16,7 +16,7 @@ if($_SESSION["perfil"]=="Especial"){
         <h1>Gráficas</h1>
         <ol class="breadcrumb">
             <li><a href="inicio"><i class="fa fa-home"></i> Inicio</a></li>
-            <li class="active">Reportes de Ventas</li>
+            <li class="active">Gráficas</li>
         </ol>
     </section>
 
@@ -25,7 +25,7 @@ if($_SESSION["perfil"]=="Especial"){
         <div class="box">
             <div class="box-header with-border">
                 <div class="col-sm-6 col-xs-12">
-                    <button type="button" class="btn btn-default" id="daterange-btn2">
+                    <button type="button" class="btn btn-default" id="daterange-btn3">
                         <span><i class="fa fa-calendar"></i> Rango de Fechas </span>
                         <i class="fa fa-caret-down"></i>
                     </button>
@@ -50,9 +50,6 @@ if($_SESSION["perfil"]=="Especial"){
                     </div>
                     <div class="col-md-6 col-xs-12">
                     <?php include 'reportes/productos-mas-vendidos.php'; ?>
-                    </div>
-                    <div class="col-md-6 col-xs-12">
-                    <?php include 'reportes/vendedores.php'; ?>
                     </div>
                     <div class="col-md-6 col-xs-12">
                     <?php include 'reportes/clientes.php'; ?>

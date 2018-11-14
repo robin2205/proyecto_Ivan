@@ -73,9 +73,7 @@ $("#seleccionCliente").change(function(){
 var numProducto=0;
 var arrayValoresIva={}; // Creamos un Objeto
 if(localStorage.getItem("objeto")!=null){
-	arrayValoresIva=JSON.parse(localStorage.getItem("objeto"));
-	activarTipoPago(); // Activamos o desactivamos la opción de Tipo_Pago
-}
+	arrayValoresIva=JSON.parse(localStorage.getItem("objeto"));}
 $("#seleccionProducto").keypress(function(e){
 	if(e.which==13){
 		numProducto++;
@@ -93,14 +91,13 @@ $("#seleccionProducto").keypress(function(e){
 			dataType:"json",
 			success:function(respuesta){
 				if(respuesta!=false){
-					// Removemos el mensaje de error si el producto existe
-					$(".msgError").remove();
-					// Creamos la variable bandera, que nos permite saber si un producto ya fue ingresado
-					var bandera=false;
+					$(".msgError").remove(); // Removemos el mensaje de error si el producto existe
+					var bandera=false; // Creamos la variable bandera, que nos permite saber si un producto ya fue ingresado
 					// Con el ciclo for in recorremos el objeto para validar si hay una propiedad igual al código ingresado
 					for(var codigo in arrayValoresIva){
 						if(codigo==$("#seleccionProducto").val()){
 							bandera=true;}}
+					console.log(bandera);
 					if(bandera==false){
 						$(".nuevoProducto").append(
 							'<div id="itemVenta">'+
@@ -138,15 +135,15 @@ $("#seleccionProducto").keypress(function(e){
 	                                '</div>'+
 	                            '</div>'+
 	                        '</div>');
+						sumarTotalPrecios(); // Sumar total de Precios
+						llenarArrayValoresIva(respuesta["codigo"],respuesta["valor_Iva"]);
+						listarProductos(); // Agrupamos productos en formato JSON
+						acumularValorIva(); // Sumamos los valores del IVA
 						$(".precioProducto").number(true,0); // Formato para los números
 						$(".valorUni").number(true,0);
 						$(".subtotalVenta").number(true,0);
 						$(".iva").number(true,0);
 						$("#seleccionProducto").val(""); // Limpiamos la caja del producto
-						sumarTotalPrecios(); // Sumar total de Precios
-						llenarArrayValoresIva(respuesta["codigo"],respuesta["valor_Iva"]);
-						activarTipoPago(); // Activamos o desactivamos la opción de Tipo_Pago
-						listarProductos(); // Agrupamos productos en formato JSON
 						// Mostramos el Subtotal
 						$("#subtotalVenta").val($("#totalVenta").val()-$("#iva").val());
 						$("#subtotalVentaSinP").val($("#totalVenta").val()-$("#iva").val());
@@ -160,7 +157,6 @@ $("#seleccionProducto").keypress(function(e){
 								    '<strong>Error!</strong> El producto ya fue ingresado, por favor verifique o aumente la cantidad.'+
 								'</div>');}
 						$("#seleccionProducto").val("");}
-					acumularValorIva(); // Sumamos los valores del IVA
 				}
 				else{
 					// Para que no se repita el mensaje
@@ -202,105 +198,124 @@ $(".form-CrearVenta").on("change","input.cantidadProducto",function(){
 	$("#subtotalVentaSinP").val($("#totalVenta").val()-$("#iva").val());
 });
 
-// SELECCIONAR MÉTODO DE PAGO
+// SELECCIONAR MÉTODO DE PAGO N°1
 $("#metodoPagoVenta").change(function(){
-	// Capturamos el método
-	var metodo=$(this).val();
+	var metodo=$(this).val(); // Capturamos el método
 	// Mostramos las cajas correspondientes al método de pago
-	if(metodo==""){
-		$(this).parent().parent().children(".cajasMetodoPago").html('');}
-	else if(metodo=="Efectivo"){
+	if(metodo=="Efectivo"){
+		$(this).parent().removeClass('col-sm-4');
+		$(this).parent().addClass('col-sm-6');
 		$(this).parent().parent().children(".cajasMetodoPago").html(
-			'<div class="col-sm-6 col-xs-12 capturarValorEfectivo pc">'+
-                '<div class="input-group" style="width:100%">'+
-                    '<span class="input-group-addon hidden-xs" id="spanAddon"><i class="ion ion-social-usd"></i></span>'+
-					'<input type="text" class="form-control nuevoValorEfectivo" placeholder="Ingrese el Pago" required style="height:38px">'+
-					'<input type="hidden" name="valorEfectivo" id="valorEfectivo">'+
-                '</div>'+
-            '</div>'+
-            '<div class="col-sm-6 col-xs-12 capturarCambioEfectivo">'+
-                '<div class="input-group" style="width:100%">'+
-                    '<span class="input-group-addon hidden-xs" id="spanAddon"><i class="ion ion-social-usd"></i></span>'+
-					'<input type="text" class="form-control nuevoCambioEfectivo" placeholder="Aquí le dira el Cambio" readonly style="height:38px">'+
-                '</div>'+
+			'<div class="col-sm-6 col-xs-12 pc">'+
+	            '<div class="input-group" style="width:100%">'+
+	                '<span class="input-group-addon hidden-xs" id="spanAddon"><i class="ion ion-social-usd"></i></span>'+
+					'<input type="text" class="form-control valorEfectivo" placeholder="Ingrese el Pago" required style="height:38px">'+
+					'<input type="hidden" name="primerPagoVenta" id="primerPagoVentaSinP">'+
+	            '</div>'+
             '</div>');
-        // Válidamos la resolución de la pantalla
-		if(window.matchMedia("(min-width:768px)").matches){
-			// Cambiamos el tamaño de las cajas por estética
-			$(this).parent().removeClass('col-sm-5');
-			$(this).parent().addClass('col-sm-4');
-			$(this).parent().parent().children(".cajasMetodoPago").removeClass('col-sm-7');
-			$(this).parent().parent().children(".cajasMetodoPago").addClass('col-sm-8');
-			// Modificamos los margenes de la caja
-			$(this).parent().parent().children(".cajasMetodoPago").css({"padding-left":0,"padding-right":0});
-			$(this).parent().parent().children(".cajasMetodoPago").children(".capturarValorEfectivo").css({"padding-left":0});
-			$(this).parent().parent().children(".cajasMetodoPago").children(".capturarCambioEfectivo").css({"padding-left":0});}
-		else{
-			$(this).parent().parent().children(".cajasMetodoPago").css({"padding-left":0,"padding-right":0,"margin-top":"5px",});}
-        // Agregamos formato a las cajas
-        $(".nuevoValorEfectivo").number(true,0);
-        $(".nuevoCambioEfectivo").number(true,0);
+        $(".valorEfectivo").number(true,0); // Agregamos formato a las cajas
         listarMetodosPago(); // Listamos el método de pago
 	}
 	else if(metodo=="T"){
-		// Válidamos la resolución de la pantalla
-		if(window.matchMedia("(min-width:768px)").matches){
-			// Cambiamos el tamaño de las cajas por estética
-			$(this).parent().removeClass('col-sm-4');
-			$(this).parent().addClass('col-sm-5');
-			$(this).parent().parent().children(".cajasMetodoPago").removeClass('col-sm-8');
-			$(this).parent().parent().children(".cajasMetodoPago").addClass('col-sm-7');
-			// Modificamos los margenes de la caja
-			$(this).parent().parent().children(".cajasMetodoPago").removeAttr("style");}
-		else{
-			$(this).parent().parent().children(".cajasMetodoPago").removeAttr("style");
-			$(this).parent().parent().children(".cajasMetodoPago").css({"margin-top":"5px"});}
+		$(this).parent().removeClass('col-sm-6');
+		$(this).parent().addClass('col-sm-4');
 		$(this).parent().parent().children(".cajasMetodoPago").html(
-            '<div class="input-group" style="width:100%">'+
-                '<input type="text" class="form-control" id="codigoTransaccion" placeholder="Código Transacción" required style="height:38px">'+
-                '<span class="input-group-addon" id="spanAddon"><i class="fa fa-lock"></i></span>'+
+			'<div class="col-sm-4 col-xs-12 pc">'+
+	            '<div class="input-group" style="width:100%">'+
+					'<span class="input-group-addon hidden-xs" id="spanAddon"><i class="ion ion-social-usd"></i></span>'+
+	                '<input type="text" class="form-control valorEfectivo" placeholder="Ingrese el Pago" style="height:38px">'+
+	                '<input type="hidden" name="primerPagoVenta" id="primerPagoVentaSinP">'+
+	            '</div>'+
+            '</div>'+
+            '<div class="col-sm-4 col-xs-12 pc">'+
+	            '<div class="input-group" style="width:100%">'+
+	                '<input type="text" class="form-control" id="codigoTransaccion" placeholder="Código Transacción" required style="height:38px">'+
+	                '<span class="input-group-addon" id="spanAddon"><i class="fa fa-lock"></i></span>'+
+	            '</div>'+
             '</div>');
+		$(".valorEfectivo").number(true,0); // Agregamos formato a las cajas
 	}
 	else if(metodo=="C"){
-		// Válidamos la resolución de la pantalla
-		if(window.matchMedia("(min-width:768px)").matches){
-			// Cambiamos el tamaño de las cajas por estética
-			$(this).parent().removeClass('col-sm-4');
-			$(this).parent().addClass('col-sm-5');
-			$(this).parent().parent().children(".cajasMetodoPago").removeClass('col-sm-8');
-			$(this).parent().parent().children(".cajasMetodoPago").addClass('col-sm-7');
-			// Modificamos los margenes de la caja
-			$(this).parent().parent().children(".cajasMetodoPago").removeAttr("style");}
-		else{
-			$(this).parent().parent().children(".cajasMetodoPago").removeAttr("style");
-			$(this).parent().parent().children(".cajasMetodoPago").css({"margin-top":"5px"});}
+		$(this).parent().removeClass('col-sm-6');
+		$(this).parent().addClass('col-sm-4');
 		$(this).parent().parent().children(".cajasMetodoPago").html(
-            '<div class="input-group" style="width:100%">'+
-            	'<span class="input-group-addon" id="spanAddon"><i class="fa fa-gg"></i></span>'+
-                '<input type="text" class="form-control" id="numCheque" placeholder="Ingrese el número de Cheque" required style="height:38px">'+
+			'<div class="col-sm-4 col-xs-12 pc">'+
+	            '<div class="input-group" style="width:100%">'+
+					'<span class="input-group-addon hidden-xs" id="spanAddon"><i class="ion ion-social-usd"></i></span>'+
+	                '<input type="text" class="form-control valorEfectivo" placeholder="Ingrese el Pago" style="height:38px">'+
+	                '<input type="hidden" name="primerPagoVenta" id="primerPagoVentaSinP">'+
+	            '</div>'+
+            '</div>'+
+            '<div class="col-sm-4 col-xs-12 pc">'+
+	            '<div class="input-group" style="width:100%">'+
+	            	'<span class="input-group-addon" id="spanAddon"><i class="fa fa-gg"></i></span>'+
+	                '<input type="text" class="form-control" id="numCheque" placeholder="Ingrese el número de Cheque" required style="height:38px">'+
+	            '</div>'+
             '</div>');
+		$(".valorEfectivo").number(true,0); // Agregamos formato a las cajas
 	}
+	else{
+		$(this).parent().removeClass('col-sm-4');
+		$(this).parent().addClass('col-sm-6');
+		$(this).parent().parent().children(".cajasMetodoPago").html('');}
 });
 
-// CAMBIO EN EFECTIVO
-$(".form-CrearVenta").on("change","input.nuevoValorEfectivo",function(){
-	// Capturamos el valor ingresado
-	var efectivo=$(this).val();
-	$(".form-CrearVenta input#valorEfectivo").val(efectivo);
-	var cambio=Number(efectivo)-Number($("#totalVenta").val());
-	if(cambio<0){
-		// Limpiamos la caja para el nuevo ingreso
-		$(this).val("");
-		// Mostramos la alerta
-		if($(".msgError").length==0){
-			$(this).parent().parent().append(
-					'<div class="alert alert-danger alert-dismissable msgError" style="margin-top:5px;">'+
-						'<a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>'+
-					    '<strong>¡Error!</strong> El pago realizado es menor a la cantidad que debe Cancelar, por favor verifique.'+
-					'</div>');}}
+// Aquí cada que presionamos un botón en el primer pago, lo enviamos a un input
+$(".form-CrearVenta").on("keyup","input.valorEfectivo",function(){
+	var valor=$(this).val();
+	$("#primerPagoVentaSinP").val(valor);
+});
+
+// SELECCIONAR MÉTODO DE PAGO N°3
+$("#metodoTercerPago").change(function(){
+	var metodo=$(this).val(); // Capturamos el método
+	// Mostramos las cajas correspondientes al método de pago
+	if(metodo=="T"){
+		$(this).parent().removeClass('col-sm-6');
+		$(this).parent().addClass('col-sm-4');
+		$(this).parent().parent().children(".cajasTercerPago").html(
+			'<div class="col-sm-4 col-xs-12 pc">'+
+	            '<div class="input-group" style="width:100%">'+
+					'<span class="input-group-addon hidden-xs" id="spanAddon"><i class="ion ion-social-usd"></i></span>'+
+	                '<input type="text" class="form-control tercerPagoVenta" placeholder="Ingrese el Pago" style="height:38px">'+
+	                '<input type="hidden" name="tercerPagoVenta" id="tercerPagoVentaSinP">'+
+	            '</div>'+
+            '</div>'+
+            '<div class="col-sm-4 col-xs-12 pc">'+
+	            '<div class="input-group" style="width:100%">'+
+	                '<input type="text" class="form-control" id="codigoTransaccionTercer" placeholder="Código Transacción" required style="height:38px">'+
+	                '<span class="input-group-addon" id="spanAddon"><i class="fa fa-lock"></i></span>'+
+	            '</div>'+
+            '</div>');
+		$(".tercerPagoVenta").number(true,0);}
+	else if(metodo=="C"){
+		$(this).parent().removeClass('col-sm-6');
+		$(this).parent().addClass('col-sm-4');
+		$(this).parent().parent().children(".cajasTercerPago").html(
+			'<div class="col-sm-4 col-xs-12 pc">'+
+	            '<div class="input-group" style="width:100%">'+
+					'<span class="input-group-addon hidden-xs" id="spanAddon"><i class="ion ion-social-usd"></i></span>'+
+	                '<input type="text" class="form-control tercerPagoVenta" placeholder="Ingrese el Pago" style="height:38px">'+
+	                '<input type="hidden" name="tercerPagoVenta" id="tercerPagoVentaSinP">'+
+	            '</div>'+
+            '</div>'+
+            '<div class="col-sm-4 col-xs-12 pc">'+
+	            '<div class="input-group" style="width:100%">'+
+	            	'<span class="input-group-addon" id="spanAddon"><i class="fa fa-gg"></i></span>'+
+	                '<input type="text" class="form-control" id="numChequeTercer" placeholder="Ingrese el número de Cheque" required style="height:38px">'+
+	            '</div>'+
+            '</div>');
+		$(".tercerPagoVenta").number(true,0);}
 	else{
-		$(".msgError").remove();
-		$(".nuevoCambioEfectivo").val(cambio);}
+		$(this).parent().removeClass('col-sm-4');
+		$(this).parent().addClass('col-sm-6');
+		$(this).parent().parent().children(".cajasTercerPago").html('');}
+});
+
+// Aquí cada que presionamos un botón en el tercer pago, lo enviamos a un input
+$(".form-CrearVenta").on("keyup","input.tercerPagoVenta",function(){
+	var valor=$(this).val();
+	$("#tercerPagoVentaSinP").val(valor);
 });
 
 // CAMBIO DE TRANSACCIÓN CON TARJETA
@@ -313,6 +328,16 @@ $(".form-CrearVenta").on("change","input#numCheque",function(){
 	listarMetodosPago(); // Listamos el método de pago
 });
 
+// CAMBIO DE TRANSACCIÓN CON TARJETA
+$(".form-CrearVenta").on("change","input#codigoTransaccionTercer",function(){
+	listarTercerPago(); // Listamos el método de pago
+});
+
+// CAMBIO DE TRANSACCIÓN CON CHEQUE
+$(".form-CrearVenta").on("change","input#numChequeTercer",function(){
+	listarTercerPago(); // Listamos el método de pago
+});
+
 // QUITAR PRODUCTO DE LA VENTA
 localStorage.removeItem("quitarProducto");
 $(".form-CrearVenta").on("click","button.quitarProducto",function(){
@@ -320,10 +345,59 @@ $(".form-CrearVenta").on("click","button.quitarProducto",function(){
 	acumularValorIva(); // Sumamos los valores del IVA
 	sumarTotalPrecios(); // Sumar total de Precios
 	listarProductos(); // Agrupamos productos en formato JSON
-	activarTipoPago(); // Activamos o desactivamos la opción de Tipo_Pago
 	// Mostramos el Subtotal
 	$("#subtotalVenta").val($("#totalVenta").val()-$("#iva").val());
 	$("#subtotalVentaSinP").val($("#totalVenta").val()-$("#iva").val());
+});
+
+// TRAER DATOS DE RECIBO
+$("#recibo").keypress(function(e){
+	if(e.which==13){
+		var reciboBuscar=$(this).val();
+		var idCliente=$("#idCliente").val();
+		if(idCliente!=""){
+			$(".msgError").remove(); // Removemos la alerta
+			// Realizamos una petición AJAX para traer el Recibo
+			var datos=new FormData();
+			datos.append("reciboBuscar",reciboBuscar);
+			datos.append("idCliente",idCliente);
+			$.ajax({
+				url:"ajax/ventas.ajax.php",
+				type:"POST",
+				data:datos,
+				cache:false,
+				contentType:false,
+				processData:false,
+				success:function(respuesta){
+					if(respuesta!=""){
+						$(".cajaRecibo").empty(); // Limpiamos el div
+						$(".cajaRecibo").append(
+							'<div class="input-group" style="width:100%">'+
+                                '<span class="input-group-addon hidden-xs" id="spanAddon"><i class="ion ion-social-usd"></i></span>'+
+                                '<input type="text" class="form-control sumaRecibo" name="sumaRecibo" id="sumaRecibo" value="'+respuesta+'" readonly style="height:38px">'+
+                                '<input type="hidden" name="sumaRecibo" value="'+respuesta+'">'+
+                            '</div>');
+						$(".sumaRecibo").number(true,0);}
+					else{
+						$(".cajaRecibo").empty(); // Limpiamos el div
+						if($(".msgError").length==0){
+							$("#recibo").parent().after(
+								'<div class="alert alert-danger alert-dismissable msgError" style="margin-top:5px">'+
+									'<a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>'+
+								    '<strong>Error!</strong> El número del Recibo no existe, no esta asignado al cliente o ya fue utilizado en una venta previa.'+
+								'</div>');
+							$("#recibo").val("");}}}
+			});}
+		else{
+			if($(".msgError").length==0){
+				$("#seleccionCliente").parent().after(
+					'<div class="alert alert-danger alert-dismissable msgError" style="margin-top:5px">'+
+						'<a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>'+
+					    '<strong>Error!</strong> Debe ingresar el Cliente primero para llamar un Recibo.'+
+					'</div>');
+				$("#recibo").val("");
+				$("#seleccionCliente").focus();}}
+	}
 });
 
 /* ============================================= FUNCIONES ============================================= */
@@ -333,8 +407,7 @@ function sumarTotalPrecios(){
 	var precioItem=$(".precioProducto");
 	var arraySumaPrecio=[];
 	for(var i=0;i<precioItem.length;i++){
-		arraySumaPrecio.push(Number($(precioItem[i]).val()));
-	}
+		arraySumaPrecio.push(Number($(precioItem[i]).val()));}
 
 	function sumarPrecios(total,numero){
 		return total+numero;}
@@ -365,20 +438,8 @@ function listarProductos(){
 			"stock":nuevoStock,
 			"precio":$(precio[i]).attr("precioReal"),
 			"total":$(precio[i]).val()
-		});
-	}
+		});}
 	$("#listaProductos").val(JSON.stringify(listaProducto));
-}
-
-// Activación Tipo de Pago
-function activarTipoPago(){
-	if($(".nuevoProducto").children().length!=0){
-		$("#metodoPagoVenta").removeAttr("disabled");
-		$("#seleccionProducto").removeAttr("required");}
-	else{
-		$("#metodoPagoVenta").attr("disabled",true);
-		$("#seleccionProducto").attr("required",true);
-		$("#listaProductos").val("");}
 }
 
 // Sumatoria del valor Iva
@@ -400,7 +461,7 @@ function llenarArrayValoresIva(propiedad,valor){
 	arrayValoresIva[propiedad]=valor;
 }
 
-// Listar el método de pago
+// Listar el método de pago N°1
 function listarMetodosPago(){
 	$("#listaMetodosPago").val("");
 	if($("#metodoPagoVenta").val()=="Efectivo"){
@@ -409,4 +470,13 @@ function listarMetodosPago(){
 		$("#listaMetodosPago").val($("#metodoPagoVenta").val()+"-"+$("#codigoTransaccion").val());}
 	else{
 		$("#listaMetodosPago").val($("#metodoPagoVenta").val()+"-"+$("#numCheque").val());}
+}
+
+// Listar el método de pago N°3
+function listarTercerPago(){
+	$("#listaTercerPago").val("");
+	if($("#metodoTercerPago").val()=="T"){
+		$("#listaTercerPago").val($("#metodoTercerPago").val()+"-"+$("#codigoTransaccionTercer").val());}
+	else{
+		$("#listaTercerPago").val($("#metodoTercerPago").val()+"-"+$("#numChequeTercer").val());}
 }

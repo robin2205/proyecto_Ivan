@@ -53,21 +53,6 @@ function cargarTablaVentas(fechaInicial,fechaFinal){
 	});
 }
 
-
-/* ========================================================================================================================
-EDITAR VENTAS
-======================================================================================================================== */
-$(".tablaVentas").on('click',"button.btnEditarVenta",function(){
-	var idVenta=$(this).attr("idVenta");
-	window.location="index.php?ruta=editar-venta&idVenta="+idVenta;
-});
-// Formato para los números en las cajas
-$(".precioProducto").number(true,0);
-$(".valorUni").number(true,0);
-$("#totalVenta").number(true,0);
-$(".subtotalVenta").number(true,0);
-$(".iva").number(true,0);
-
 /* ========================================================================================================================
 ANULAR VENTAS
 ======================================================================================================================== */
@@ -197,3 +182,94 @@ function optimizar(dato){
 		dato='0'+dato;}
 	return dato;
 }
+
+/* ========================================================================================================================
+DETALLES PAGOS VENTA
+======================================================================================================================== */
+$(".tablaVentas").on('click',"button.btnVerDetallesVenta",function(){
+	// Limpiamos los campos
+	$("#detaFactura").empty();
+	$("#detaCliente").empty();
+	$("#detaUsuario").empty();
+	$("#detaTotal").empty();
+	$(".pago1").empty();
+	$(".pago2").empty();
+	$(".pago3").empty();
+	$("#totalPagado").empty();
+	var idVenta=$(this).attr("idVenta");
+	var datos=new FormData();
+	datos.append("idVentaPagos",idVenta);
+	$.ajax({
+		url:"ajax/ventas.ajax.php",
+		type:"POST",
+		data:datos,
+		cache:false,
+		contentType:false,
+		processData:false,
+		dataType:"json",
+		success:function(respuesta){
+			// Llenamos los campos
+			$("#detaFactura").val(respuesta["factura"]);
+			$("#detaCliente").val(respuesta["id_cliente"]);
+			$("#detaUsuario").val(respuesta["id_vendedor"]);
+			$("#detaTotal").val(respuesta["total"]);
+			$(".detaTotal").number(true,0);
+			// Pago 1
+			if(respuesta["metodo_1"]!=""){
+				$(".pago1").append(
+					'<!-- Método de Pago 1 -->'+
+	                '<div class="col-sm-6 col-xs-12 pc">'+
+	                    '<div class="input-group" style="width:100%">'+
+	                        '<span class="input-group-addon" id="spanAddon"><i class="fa fa-tag"></i></span>'+
+	                        '<input type="text" class="form-control" value="'+respuesta["metodo_1"]+'" readonly>'+
+	                    '</div>'+
+	                '</div>'+
+	                '<!-- Valor Pago 1 -->'+
+	                '<div class="col-sm-6 col-xs-12">'+
+	                    '<div class="input-group" style="width:100%">'+
+	                        '<span class="input-group-addon" id="spanAddon"><i class="ion ion-social-usd"></i></span>'+
+	                        '<input type="text" class="form-control pago1" value="'+respuesta["pago_1"]+'" readonly>'+
+	                    '</div>'+
+	                '</div>');
+				$(".pago1").number(true,0);}
+			// Pago 2
+			if(respuesta["pago_recibo"]!=0){
+				$(".pago2").append(
+					'<!-- Método de Pago 2 -->'+
+	                '<div class="col-sm-6 col-xs-12 pc">'+
+	                    '<div class="input-group" style="width:100%">'+
+	                        '<span class="input-group-addon" id="spanAddon"><i class="fa fa-tag"></i></span>'+
+	                        '<input type="text" class="form-control" value="Recibo N° '+respuesta["num_recibo"]+'" readonly>'+
+	                    '</div>'+
+	                '</div>'+
+	                '<!-- Valor Pago 2 -->'+
+	                '<div class="col-sm-6 col-xs-12">'+
+	                    '<div class="input-group" style="width:100%">'+
+	                        '<span class="input-group-addon" id="spanAddon"><i class="ion ion-social-usd"></i></span>'+
+	                        '<input type="text" class="form-control pago2" value="'+respuesta["pago_recibo"]+'" readonly>'+
+	                    '</div>'+
+	                '</div>');
+				$(".pago2").number(true,0);}
+			// Pago 3
+			if(respuesta["metodo_3"]!=0){
+				$(".pago3").append(
+					'<!-- Método de Pago 3 -->'+
+	                '<div class="col-sm-6 col-xs-12 pc">'+
+	                    '<div class="input-group" style="width:100%">'+
+	                        '<span class="input-group-addon" id="spanAddon"><i class="fa fa-tag"></i></span>'+
+	                        '<input type="text" class="form-control" value="'+respuesta["metodo_3"]+'" readonly>'+
+	                    '</div>'+
+	                '</div>'+
+	                '<!-- Valor Pago 3 -->'+
+	                '<div class="col-sm-6 col-xs-12">'+
+	                    '<div class="input-group" style="width:100%">'+
+	                        '<span class="input-group-addon" id="spanAddon"><i class="ion ion-social-usd"></i></span>'+
+	                        '<input type="text" class="form-control pago3" value="'+respuesta["pago_3"]+'" readonly>'+
+	                    '</div>'+
+	                '</div>');
+				$(".pago3").number(true,0);}
+			$("#totalPagado").val(respuesta["total"]);
+			$(".totalPagado").number(true,0);
+		}
+	});
+});
